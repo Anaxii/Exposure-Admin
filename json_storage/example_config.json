@@ -1,0 +1,155 @@
+{
+  "privateKey": "",
+  "init": true,
+  "bot": true,
+  "apiPort": 8080,
+  "reboot": false,
+  "newETF": true,
+  "discordToken": "",
+  "exposureAddress": "0xfBD524746a833E93CE035fF3DAb16C950c980C28",
+  "exposureFactoryAddress": "0xdf58Eb61632Bc7B8fAE7E58ED1c0BcB5373Efaa6",
+  "routerAddress": "0x2D99ABD9008Dc933ff5c0CD271B88309593aB921",
+  "USDCAddress": "0x803871f6BB32a9C1230cdc182002f8e058791A9A",
+  "APIURL": "https://api.avax-test.network/ext/bc/C/rpc",
+  "shareCreation": true,
+  "bias": [
+    {
+      "buy": 18,
+      "sell": 17
+    },
+    {
+      "buy": 18,
+      "sell": 17
+    },
+    {
+      "buy": 18,
+      "sell": 17
+    },
+    {
+      "buy": 18,
+      "sell": 17
+    },
+    {
+      "buy": 18,
+      "sell": 17
+    },
+    {
+      "buy": 18,
+      "sell": 17
+    },
+    {
+      "buy": 18,
+      "sell": 17
+    },
+    {
+      "buy": 18,
+      "sell": 17
+    },
+    {
+      "buy": 18,
+      "sell": 17
+    },
+    {
+      "buy": 18,
+      "sell": 17
+    }
+  ],
+  "sellBias": 17,
+  "buyBias": 18,
+  "discordNotifications": true,
+  "status": {
+    "epoch": true
+  },
+  "accounts": [
+  ],
+  "WAVAX": {
+    "name": "WAVAX/USDC",
+    "token": "WAVAX",
+    "quote": "USDC",
+    "pairAddress": "0x23Cb1c2582C23C7E45415E290580E7C7e5af7C0D",
+    "tokenAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883",
+    "quoteAddress": "0x803871f6BB32a9C1230cdc182002f8e058791A9A"
+  },
+  "tokens": [
+    {
+      "name": "Token A/WAVAX",
+      "token": "Token A",
+      "quote": "WAVAX",
+      "pairAddress": "0x2202497d8A65fc65540c3Bf189d6f8dA9756739B",
+      "tokenAddress": "0x81aA662AA88fA2866dae2cd8F732CdDcC960B21a",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    },
+    {
+      "name": "Token B/WAVAX",
+      "token": "Token B",
+      "quote": "WAVAX",
+      "pairAddress": "0x5F7Cf736DA5Ad0Dfe04516c8d32c9a348034Ad30",
+      "tokenAddress": "0xbBaB816955660ff71F553bE0b942F51C83634cd2",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    },
+    {
+      "name": "Token C/WAVAX",
+      "token": "Token C",
+      "quote": "WAVAX",
+      "pairAddress": "0xd32953c04A106a0753b29D371C1e7074C3cF8068",
+      "tokenAddress": "0x1948EaB46Ff886190eBd50250EB486517e132F3B",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    },
+    {
+      "name": "Token D/WAVAX",
+      "token": "Token D",
+      "quote": "WAVAX",
+      "pairAddress": "0x2e6431DA1DfeF4B09E9511fb737756c1A7F3ae68",
+      "tokenAddress": "0xf84A51797c6A9A4BFb8E7206AA246d887031399b",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    },
+    {
+      "name": "Token E/WAVAX",
+      "token": "Token E",
+      "quote": "WAVAX",
+      "pairAddress": "0x6cBB586CdDc9799b0101Cbc5d35C5b2412aaDDA6",
+      "tokenAddress": "0x281D66d554D733DB0D03236ACAAe3746c2d3C2A8",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    },
+    {
+      "name": "Token F/WAVAX",
+      "token": "Token F",
+      "quote": "WAVAX",
+      "pairAddress": "0x4217eacc1bd512B62eD8f2D49C0686a91DfE7706",
+      "tokenAddress": "0x6D27b9c9d52dcd9D33E258463CAfA0B84EBA3FcD",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    },
+    {
+      "name": "Token G/WAVAX",
+      "token": "Token G",
+      "quote": "WAVAX",
+      "pairAddress": "0xf96c875D888E76FBf2df62563946c1D0E66B350e",
+      "tokenAddress": "0xB2bF61390A770c5883C6674E84Df8B789441156D",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    },
+    {
+      "name": "Token H/WAVAX",
+      "token": "Token H",
+      "quote": "WAVAX",
+      "pairAddress": "0x042A7541f1cb77e571873fA38ce90d8F327198f7",
+      "tokenAddress": "0x1D75Fe89157568e852Ad9bff6b4246e6Ce22EFC7",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    },
+    {
+      "name": "Token I/WAVAX",
+      "token": "Token I",
+      "quote": "WAVAX",
+      "pairAddress": "0x44fdBC4455d97355a957D68A6eB2471B66987B65",
+      "tokenAddress": "0x114419D1d4A6004aA6888Fc981Be77288447ef01",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    },
+    {
+      "name": "Token J/WAVAX",
+      "token": "Token J",
+      "quote": "WAVAX",
+      "pairAddress": "0xb6911DF489DFDcD0633b2FC5E1efa61bac41BBBd",
+      "tokenAddress": "0xb119AbFA9dfA20ae4960F0BFe8E82149C1C9D669",
+      "quoteAddress": "0x72187342BC71CAd08FcCC361ff8336A684dd6883"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+    "abi": [
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "tokenAddress",
+					"type": "address"
+				}
+			],
+			"name": "ERC20TokenCreated",
+			"type": "event"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "string",
+					"name": "name",
+					"type": "string"
+				}
+			],
+			"name": "deployNewERC20Token",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+}
