@@ -198,7 +198,7 @@ export class ExposureInfo {
             let tportion = await this.tokenPortionIndex(true)
             let shareBalance = await this.e.ExposureObject.methods.totalSupply().call()
             let info = "Index Price:                                $" + ind.toLocaleString() + "\nPortion Index Price:                  $" + portion.toLocaleString() + "\nTracked Portion Index Price:   $" + tportion.toLocaleString() + "\nTrue Index Price:                       $" + actual.toLocaleString()
-                + "NAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + p + ep
+                + "\nNAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + p + ep
             if (notif)
             await sendDiscordWebook(info)
             ok(info)

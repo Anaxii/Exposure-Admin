@@ -213,7 +213,7 @@ class ExposureInfo {
                 let tportion = yield this.tokenPortionIndex(true);
                 let shareBalance = yield this.e.ExposureObject.methods.totalSupply().call();
                 let info = "Index Price:                                $" + ind.toLocaleString() + "\nPortion Index Price:                  $" + portion.toLocaleString() + "\nTracked Portion Index Price:   $" + tportion.toLocaleString() + "\nTrue Index Price:                       $" + actual.toLocaleString()
-                    + "NAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + p + ep;
+                    + "\nNAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + p + ep;
                 if (notif)
                     yield discordbot_1.sendDiscordWebook(info);
                 ok(info);

@@ -13,8 +13,8 @@ export class ExposureSteps {
     }
 
     async executeStep(step: number) {
-       let steps: {[key: number]: any} = {
-           0: async () => {
+       let steps: {[key: number]: () => Promise<boolean | string>} = {
+           0: async (): Promise<boolean> => {
                return new Promise(async (ok, reject) => {
                    await this.Exposure.methods.startRebalance().send({from: this.PublicKey}).then(() => {
                        ok(true)
@@ -23,7 +23,7 @@ export class ExposureSteps {
                    })
                })
            },
-           1: async () => {
+           1: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
 
                    let pair_array = []
@@ -41,7 +41,7 @@ export class ExposureSteps {
                    })
                })
            },
-           2: async () => {
+           2: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
                    await this.Exposure.methods.removeTokens([]).send({from: this.PublicKey}).then(() => {
                        ok(true)
@@ -50,7 +50,7 @@ export class ExposureSteps {
                    })
                })
            },
-           3: async () => {
+           3: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
                    for (const i in this.Tokens) {
                        await this.Exposure.methods.updateTokenMarketCap().send({from: this.PublicKey}).catch((err: any) => {
@@ -61,7 +61,7 @@ export class ExposureSteps {
                    ok(true)
                })
            },
-           4: async () => {
+           4: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
                    await this.Exposure.methods.updateIndexTotal().send({from: this.PublicKey}).then(() => {
                        ok(true)
@@ -70,7 +70,7 @@ export class ExposureSteps {
                    })
                })
            },
-           5: async () => {
+           5: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
                    for (const i in this.Tokens) {
                        await this.Exposure.methods.updateTokenPortions().send({from: this.PublicKey}).then(() => {
@@ -81,7 +81,7 @@ export class ExposureSteps {
                    }
                })
            },
-           6: async () => {
+           6: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
                    await this.Exposure.methods.updateRemainingPortions().send({from: this.PublicKey}).then(() => {
                        ok(true)
@@ -90,7 +90,7 @@ export class ExposureSteps {
                    })
                })
            },
-           7: async () => {
+           7: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
                    await this.Exposure.methods.rebaseLiquidate().send({from: this.PublicKey}).then(() => {
                        ok(true)
@@ -99,7 +99,7 @@ export class ExposureSteps {
                    })
                })
            },
-           8: async () => {
+           8: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
                    await this.Exposure.methods.rebaseBuy().send({from: this.PublicKey}).then(() => {
                        ok(true)
@@ -108,7 +108,7 @@ export class ExposureSteps {
                    })
                })
            },
-           9: async () => {
+           9: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
                    await this.Exposure.methods.finalizeIndexPrice().send({from: this.PublicKey}).then(() => {
                        ok(true)
@@ -117,7 +117,7 @@ export class ExposureSteps {
                    })
                })
            },
-           10: async () => {
+           10: async (): Promise<boolean | string> => {
                return new Promise(async (ok, reject) => {
                    await this.Exposure.methods.newEpoch().send({from: this.PublicKey}).then(() => {
                        ok(true)

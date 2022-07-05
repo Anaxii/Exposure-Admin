@@ -115,7 +115,7 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
                 await editConfig("discordNotifications", DiscordNotifications)
             }
             if (data[1] == "newetf") {
-                await e.newETF("TEST", "TEST")
+                await e.newETF(data[1], data[2])
             }
             if (data[1] == "editconfig" && data.length > 3) {
                 await editConfig(data[2], data[3])
@@ -144,6 +144,9 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
         if (data[1] == "sharebalance") {
             let shareBalance = await e.ExposureObject.methods.balanceOf(e.PublicKey).call()
             await msg.channel.send("Balance: " + (Number(BigInt(shareBalance) / BigInt(10**14)) / (10**4)).toLocaleString())
+        }
+        if (data[1] == "help") {
+            await msg.channel.send("epoch \nepochinfo \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ")
         }
         }
     );

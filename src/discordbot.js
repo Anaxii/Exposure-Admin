@@ -121,7 +121,7 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 yield util_1.editConfig("discordNotifications", DiscordNotifications);
             }
             if (data[1] == "newetf") {
-                yield e.newETF("TEST", "TEST");
+                yield e.newETF(data[1], data[2]);
             }
             if (data[1] == "editconfig" && data.length > 3) {
                 yield util_1.editConfig(data[2], data[3]);
@@ -150,6 +150,9 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
             if (data[1] == "sharebalance") {
                 let shareBalance = yield e.ExposureObject.methods.balanceOf(e.PublicKey).call();
                 yield msg.channel.send("Balance: " + (Number(BigInt(shareBalance) / BigInt(10 ** 14)) / (10 ** 4)).toLocaleString());
+            }
+            if (data[1] == "help") {
+                yield msg.channel.send("epoch \nepochinfo \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ");
             }
         }));
         client.login(discordToken);
