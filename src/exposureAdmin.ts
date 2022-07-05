@@ -81,24 +81,23 @@ export class ExposureAdmin {
     async newETF(etfName: string, etfSymbol: string) {
         if (!await this.changeAccount(this.PrivateKey))
             return
-        let factory = new this.Web3.eth.Contract(ExposureFactoryABI, this.ExposureFactoryAddress)
-        let newBasket = await factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({from: this.PublicKey})
+        const factory = new this.Web3.eth.Contract(ExposureFactoryABI, this.ExposureFactoryAddress)
+        const newBasket = await factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({from: this.PublicKey})
         await sendDiscordWebook(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`)
         this.ExposureAddress = newBasket.events[0].address
-        editConfig("exposureAddress", this.ExposureAddress)
+        await editConfig("exposureAddress", this.ExposureAddress)
         await sleep(1000)
-        this.initExposure()
+        await this.initExposure()
     }
 
     private async runSteps(step: number, maxStep: number) {
-        let exposure = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress)
-        let currentEpoch = await exposure.methods.epoch().call()
-        let exposureSteps = new ExposureSteps(exposure, this.PublicKey, this.Tokens)
+        let currentEpoch = await this.ExposureObject.methods.epoch().call()
+        const exposureSteps = new ExposureSteps(this.ExposureObject, this.PublicKey, this.Tokens)
         for (step; step <= maxStep; step++) {
             await sleep(2000)
-            currentEpoch = await exposure.methods.epoch().call()
+            currentEpoch = await this.ExposureObject.methods.epoch().call()
             if (step == 4)
-                await exposure.methods.changeIndexDivisor(0, (100000000 + "0".repeat(18).toString())).send({from: this.PublicKey}).catch((err: any) => {
+                await this.ExposureObject.methods.changeIndexDivisor(0, (100000000 + "0".repeat(18).toString())).send({from: this.PublicKey}).catch((err: any) => {
                     console.log("STEP 4 chaing index diviso", err)
                 })
             console.log("Starting step", step)
@@ -112,8 +111,8 @@ export class ExposureAdmin {
                 console.log(error[0])
 
                 await sleep(15000)
-                step = Number(await exposure.methods.rebalanceStep().call()) - 1
-                console.log(step)
+                step = Number(await this.ExposureObject.methods.rebalanceStep().call()) - 1
+                console.log(step + 1)
             })
 
         }
@@ -124,12 +123,11 @@ export class ExposureAdmin {
         if (!await this.changeAccount(this.PrivateKey))
             return
         await sleep(1000)
-        let exposure = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress)
-        await exposure.methods.startETF().send({from: this.PublicKey}).catch(() => {
+        await this.ExposureObject.methods.startETF().send({from: this.PublicKey}).catch(() => {
             console.log("Basket already started")
         })
         await this.runSteps(1, 9)
-        await exposure.methods.initETF().send({from: this.PublicKey}).then(() => {
+        await this.ExposureObject.methods.initETF().send({from: this.PublicKey}).then(() => {
             console.log("done")
         }).catch(async (err: any) => {
             await this.initExposure()
@@ -171,7 +169,7 @@ export class ExposureAdmin {
             for (const i in this.Tokens) {
                 let portion = await this.ExposureObject.methods.getTokenPortions(this.CurrentEpoch, this.Tokens[i].tokenAddress).call()
                 portions[this.Tokens[i].token] = (BigInt(portion) * BigInt(amount)) / BigInt(10 * 18)
-                let token = new this.Web3.eth.Contract(ERC20ABI, this.Tokens[i].tokenAddress)
+                const token = new this.Web3.eth.Contract(ERC20ABI, this.Tokens[i].tokenAddress)
                 await token.methods.approve(this.ExposureAddress, BigInt(portions[this.Tokens[i].token])).send({from: this.PublicKey}).catch((err: any) => {
                     console.log(err)
                     resolve(shareBalance)

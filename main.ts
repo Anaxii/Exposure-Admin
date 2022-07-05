@@ -6,11 +6,11 @@ import {ExposureAdmin} from "./src/exposureAdmin";
 import {ExposureInfo} from "./src/ExposureInfo";
 
 (async function () {
-    let config = await getConfig()
+    const config = await getConfig()
     if (!config)
         return
-    let e = await new ExposureAdmin(config)
-    let i = new ExposureInfo(e)
+    const e = await new ExposureAdmin(config)
+    const i = new ExposureInfo(e)
     discordBot(config.discordToken, e, i, config.discordNotifications)
 }())
 
