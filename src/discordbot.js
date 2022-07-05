@@ -153,7 +153,8 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
             const data = msg.content.split(" ");
             if (data[0] != "!e" || data.length === 1)
                 return;
-            commands[data[1]](msg, data);
+            if (commands[data[1]])
+                commands[data[1]](msg, data);
         });
         client.login(discordToken);
     });

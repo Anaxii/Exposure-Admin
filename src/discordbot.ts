@@ -147,6 +147,7 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
             if (data[0] != "!e" || data.length === 1)
                 return
 
+        if (commands[data[1]])
             commands[data[1]](msg, data)
         }
     );
