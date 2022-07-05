@@ -85,6 +85,7 @@ export class ExposureAdmin {
         const newBasket = await factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({from: this.PublicKey})
         await sendDiscordWebook(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`)
         this.ExposureAddress = newBasket.events[0].address
+        this.ExposureObject = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress)
         await editConfig("exposureAddress", this.ExposureAddress)
         await sleep(1000)
         await this.initExposure()

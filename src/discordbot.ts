@@ -102,6 +102,8 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
             await editConfig("discordNotifications", DiscordNotifications)
         },
         "newetf": async (msg: any, data: string[]): Promise<void> => {
+            if (!data[1] && !data[2])
+                return
             msg.channel.send("Starting new ETF")
             let address = await e.newETF(data[1], data[2])
             msg.channel.send("New ETF initialized at " + address)

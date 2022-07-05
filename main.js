@@ -15,11 +15,11 @@ const exposureAdmin_1 = require("./src/exposureAdmin");
 const ExposureInfo_1 = require("./src/ExposureInfo");
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
-        let config = yield getConfig();
+        const config = yield getConfig();
         if (!config)
             return;
-        let e = yield new exposureAdmin_1.ExposureAdmin(config);
-        let i = new ExposureInfo_1.ExposureInfo(e);
+        const e = yield new exposureAdmin_1.ExposureAdmin(config);
+        const i = new ExposureInfo_1.ExposureInfo(e);
         discordbot_1.discordBot(config.discordToken, e, i, config.discordNotifications);
     });
 }());

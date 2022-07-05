@@ -69,25 +69,24 @@ class ExposureAdmin {
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.changeAccount(this.PrivateKey)))
                 return;
-            let factory = new this.Web3.eth.Contract(ExposureFactoryABI, this.ExposureFactoryAddress);
-            let newBasket = yield factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({ from: this.PublicKey });
+            const factory = new this.Web3.eth.Contract(ExposureFactoryABI, this.ExposureFactoryAddress);
+            const newBasket = yield factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({ from: this.PublicKey });
             yield discordbot_1.sendDiscordWebook(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`);
             this.ExposureAddress = newBasket.events[0].address;
-            util_1.editConfig("exposureAddress", this.ExposureAddress);
+            yield util_1.editConfig("exposureAddress", this.ExposureAddress);
             yield util_1.sleep(1000);
-            this.initExposure();
+            yield this.initExposure();
         });
     }
     runSteps(step, maxStep) {
         return __awaiter(this, void 0, void 0, function* () {
-            let exposure = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress);
-            let currentEpoch = yield exposure.methods.epoch().call();
-            let exposureSteps = new steps_1.ExposureSteps(exposure, this.PublicKey, this.Tokens);
+            let currentEpoch = yield this.ExposureObject.methods.epoch().call();
+            const exposureSteps = new steps_1.ExposureSteps(this.ExposureObject, this.PublicKey, this.Tokens);
             for (step; step <= maxStep; step++) {
                 yield util_1.sleep(2000);
-                currentEpoch = yield exposure.methods.epoch().call();
+                currentEpoch = yield this.ExposureObject.methods.epoch().call();
                 if (step == 4)
-                    yield exposure.methods.changeIndexDivisor(0, (100000000 + "0".repeat(18).toString())).send({ from: this.PublicKey }).catch((err) => {
+                    yield this.ExposureObject.methods.changeIndexDivisor(0, (100000000 + "0".repeat(18).toString())).send({ from: this.PublicKey }).catch((err) => {
                         console.log("STEP 4 chaing index diviso", err);
                     });
                 console.log("Starting step", step);
@@ -100,8 +99,8 @@ class ExposureAdmin {
                         return;
                     console.log(error[0]);
                     yield util_1.sleep(15000);
-                    step = Number(yield exposure.methods.rebalanceStep().call()) - 1;
-                    console.log(step);
+                    step = Number(yield this.ExposureObject.methods.rebalanceStep().call()) - 1;
+                    console.log(step + 1);
                 }));
             }
             yield util_1.sleep(2000);
@@ -112,12 +111,11 @@ class ExposureAdmin {
             if (!(yield this.changeAccount(this.PrivateKey)))
                 return;
             yield util_1.sleep(1000);
-            let exposure = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress);
-            yield exposure.methods.startETF().send({ from: this.PublicKey }).catch(() => {
+            yield this.ExposureObject.methods.startETF().send({ from: this.PublicKey }).catch(() => {
                 console.log("Basket already started");
             });
             yield this.runSteps(1, 9);
-            yield exposure.methods.initETF().send({ from: this.PublicKey }).then(() => {
+            yield this.ExposureObject.methods.initETF().send({ from: this.PublicKey }).then(() => {
                 console.log("done");
             }).catch((err) => __awaiter(this, void 0, void 0, function* () {
                 yield this.initExposure();
@@ -162,7 +160,7 @@ class ExposureAdmin {
                 for (const i in this.Tokens) {
                     let portion = yield this.ExposureObject.methods.getTokenPortions(this.CurrentEpoch, this.Tokens[i].tokenAddress).call();
                     portions[this.Tokens[i].token] = (BigInt(portion) * BigInt(amount)) / BigInt(10 * 18);
-                    let token = new this.Web3.eth.Contract(ERC20ABI, this.Tokens[i].tokenAddress);
+                    const token = new this.Web3.eth.Contract(ERC20ABI, this.Tokens[i].tokenAddress);
                     yield token.methods.approve(this.ExposureAddress, BigInt(portions[this.Tokens[i].token])).send({ from: this.PublicKey }).catch((err) => {
                         console.log(err);
                         resolve(shareBalance);
