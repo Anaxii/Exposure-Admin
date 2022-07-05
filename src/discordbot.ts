@@ -27,6 +27,10 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
             let epochInfo = await info.epochNotification(false)
             msg.channel.send(epochInfo)
         },
+        "basketaddress": async (msg: any): Promise<void> => {
+            msg.channel.send(e.ExposureAddress)
+
+        },
         "nextepoch": async (): Promise<void> => {
             await info.epochNotification(true)
             await e.nextEpoch()
@@ -102,10 +106,10 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
             await editConfig("discordNotifications", DiscordNotifications)
         },
         "newetf": async (msg: any, data: string[]): Promise<void> => {
-            if (!data[1] && !data[2])
+            if (!data[2] && !data[3])
                 return
             msg.channel.send("Starting new ETF")
-            let address = await e.newETF(data[1], data[2])
+            let address = await e.newETF(data[2], data[3])
             msg.channel.send("New ETF initialized at " + address)
         },
         "editconfig": async (msg: any, data: string[]): Promise<void> => {
@@ -133,9 +137,20 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
             let shareBalance = await e.ExposureObject.methods.balanceOf(e.PublicKey).call()
             await msg.channel.send("Balance: " + (Number(BigInt(shareBalance) / BigInt(10 ** 14)) / (10 ** 4)).toLocaleString())
         },
+        "baskets": async (msg: any): Promise<void> => {
+            console.log(e.Baskets)
+            let basket_list = ""
+            for (const i in e.Baskets) {
+                let token_list = ""
+                for (const j in e.Baskets[i].tokens) {
+                    token_list += e.Baskets[i].tokens[j].token + "\n"
+                }
+                basket_list += `${e.Baskets[i].name} [${e.Baskets[i].symbol}] | Address: ${i}\n**Tokens: (${e.Baskets[i].tokens.length})**\n${token_list}`
+            }
+            msg.channel.send(basket_list)
+        },
         "help": async (msg: any): Promise<void> => {
-            await msg.channel.send("epoch \nepochinfo \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ")
-
+            await msg.channel.send("epoch \nepochinfo \nbasketaddress \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ")
         }
     }
 

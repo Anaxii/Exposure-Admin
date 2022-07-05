@@ -37,6 +37,9 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 let epochInfo = yield info.epochNotification(false);
                 msg.channel.send(epochInfo);
             }),
+            "basketaddress": (msg) => __awaiter(this, void 0, void 0, function* () {
+                msg.channel.send(e.ExposureAddress);
+            }),
             "nextepoch": () => __awaiter(this, void 0, void 0, function* () {
                 yield info.epochNotification(true);
                 yield e.nextEpoch();
@@ -112,8 +115,10 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 yield util_1.editConfig("discordNotifications", DiscordNotifications);
             }),
             "newetf": (msg, data) => __awaiter(this, void 0, void 0, function* () {
+                if (!data[2] && !data[3])
+                    return;
                 msg.channel.send("Starting new ETF");
-                let address = yield e.newETF(data[1], data[2]);
+                let address = yield e.newETF(data[2], data[3]);
                 msg.channel.send("New ETF initialized at " + address);
             }),
             "editconfig": (msg, data) => __awaiter(this, void 0, void 0, function* () {
@@ -141,8 +146,20 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 let shareBalance = yield e.ExposureObject.methods.balanceOf(e.PublicKey).call();
                 yield msg.channel.send("Balance: " + (Number(BigInt(shareBalance) / BigInt(10 ** 14)) / (10 ** 4)).toLocaleString());
             }),
+            "baskets": (msg) => __awaiter(this, void 0, void 0, function* () {
+                console.log(e.Baskets);
+                let basket_list = "";
+                for (const i in e.Baskets) {
+                    let token_list = "";
+                    for (const j in e.Baskets[i].tokens) {
+                        token_list += e.Baskets[i].tokens[j].token + "\n";
+                    }
+                    basket_list += `${e.Baskets[i].name} [${e.Baskets[i].symbol}] | Address: ${i}\n**Tokens: (${e.Baskets[i].tokens.length})**\n${token_list}`;
+                }
+                msg.channel.send(basket_list);
+            }),
             "help": (msg) => __awaiter(this, void 0, void 0, function* () {
-                yield msg.channel.send("epoch \nepochinfo \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ");
+                yield msg.channel.send("epoch \nepochinfo \nbasketaddress \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ");
             })
         };
         client.once('ready', () => {

@@ -43,6 +43,7 @@ class ExposureAdmin {
         this.PublicKey = this.Accounts.privateKeyToAccount(this.PrivateKey).address;
         this.DiscordBot = "";
         this.CurrentEpoch = 0;
+        this.Baskets = config.baskets;
         this.setInitialEpoch().then(r => this.CurrentEpoch = r);
     }
     setInitialEpoch() {
@@ -73,9 +74,11 @@ class ExposureAdmin {
             const newBasket = yield factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({ from: this.PublicKey });
             yield discordbot_1.sendDiscordWebook(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`);
             this.ExposureAddress = newBasket.events[0].address;
+            this.ExposureObject = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress);
             yield util_1.editConfig("exposureAddress", this.ExposureAddress);
             yield util_1.sleep(1000);
             yield this.initExposure();
+            return this.ExposureAddress;
         });
     }
     runSteps(step, maxStep) {
@@ -91,12 +94,14 @@ class ExposureAdmin {
                     });
                 console.log("Starting step", step);
                 yield exposureSteps.executeStep(step).then(() => __awaiter(this, void 0, void 0, function* () {
+                    yield discordbot_1.sendDiscordWebook(`Step ${step} done`);
                     console.log(step, "done");
                     yield util_1.sleep(1000);
                 })).catch((err) => __awaiter(this, void 0, void 0, function* () {
                     let error = err.toString().split("\n");
                     if (!error[0])
                         return;
+                    yield discordbot_1.sendDiscordWebook(`Step ${step} error: ${error[0]}`);
                     console.log(error[0]);
                     yield util_1.sleep(15000);
                     step = Number(yield this.ExposureObject.methods.rebalanceStep().call()) - 1;

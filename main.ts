@@ -12,6 +12,7 @@ import {ExposureInfo} from "./src/ExposureInfo";
     const e = await new ExposureAdmin(config)
     const i = new ExposureInfo(e)
     discordBot(config.discordToken, e, i, config.discordNotifications)
+    console.log(e.Baskets)
 }())
 
 async function getConfig(): Promise<Config | null> {

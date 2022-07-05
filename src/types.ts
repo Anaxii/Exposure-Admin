@@ -20,6 +20,7 @@ export interface Config {
     accounts: Accounts[];
     WAVAX: WAVAX;
     tokens: Tokens[];
+    baskets: {[key: string]: any}
 }
 export interface Bias {
     buy: number;

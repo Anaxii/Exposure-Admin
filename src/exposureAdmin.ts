@@ -34,6 +34,7 @@ export class ExposureAdmin {
     private PrivateKey: string;
     API: string;
     CurrentEpoch: any;
+    Baskets: { [key: string]: any }
 
     constructor(config: Config) {
         this.Status = config.status
@@ -58,6 +59,7 @@ export class ExposureAdmin {
         this.PublicKey = this.Accounts.privateKeyToAccount(this.PrivateKey).address;
         this.DiscordBot = ""
         this.CurrentEpoch = 0
+        this.Baskets = config.baskets
         this.setInitialEpoch().then(r => this.CurrentEpoch = r)
     }
 
@@ -89,6 +91,7 @@ export class ExposureAdmin {
         await editConfig("exposureAddress", this.ExposureAddress)
         await sleep(1000)
         await this.initExposure()
+        return this.ExposureAddress
     }
 
     private async runSteps(step: number, maxStep: number) {
@@ -103,12 +106,14 @@ export class ExposureAdmin {
                 })
             console.log("Starting step", step)
             await exposureSteps.executeStep(step).then(async () => {
+                await sendDiscordWebook(`Step ${step} done`)
                 console.log(step, "done")
                 await sleep(1000)
             }).catch(async (err) => {
                 let error = err.toString().split("\n")
                 if (!error[0])
                     return
+                await sendDiscordWebook(`Step ${step} error: ${error[0]}`)
                 console.log(error[0])
 
                 await sleep(15000)
