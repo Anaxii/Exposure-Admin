@@ -21,8 +21,6 @@ const ERC20ABI = require("../abi/erc20.json");
 const ExposureFactoryABI = require("../abi/exposure_factory.json");
 class ExposureAdmin {
     constructor(config) {
-        this.Status = config.status;
-        this.Init = config.init;
         this.RunBot = config.bot;
         this.PrivateKey = config.privateKey;
         this.API = config.APIURL;
@@ -34,7 +32,6 @@ class ExposureAdmin {
         this.Tokens = config.tokens;
         this.TestnetAccounts = config.accounts;
         this.APIPort = config.apiPort;
-        this.ShareCreation = config.shareCreation;
         this.Provider = new HDWalletProvider(this.PrivateKey, this.API);
         this.Accounts = new Accounts(this.Provider);
         this.Web3 = new web3(this.Provider);

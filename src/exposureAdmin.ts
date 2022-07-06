@@ -18,7 +18,6 @@ export class ExposureAdmin {
     ExposureFactoryAddress: string;
     readonly WAVAX: WAVAX;
     Tokens: Tokens[];
-    Init: boolean;
     Provider: any;
     Accounts: any;
     Web3: any;
@@ -28,7 +27,6 @@ export class ExposureAdmin {
     TestnetAccounts: Accounts[];
     Status: any;
     APIPort: number;
-    ShareCreation: boolean;
     ExposureObject: any
     private DiscordBot: string;
     private PrivateKey: string;
@@ -37,8 +35,6 @@ export class ExposureAdmin {
     Baskets: { [key: string]: any }
 
     constructor(config: Config) {
-        this.Status = config.status
-        this.Init = config.init
         this.RunBot = config.bot
         this.PrivateKey = config.privateKey
         this.API = config.APIURL
@@ -50,7 +46,6 @@ export class ExposureAdmin {
         this.Tokens = config.tokens
         this.TestnetAccounts = config.accounts
         this.APIPort = config.apiPort
-        this.ShareCreation = config.shareCreation
         this.Provider = new HDWalletProvider(this.PrivateKey, this.API);
         this.Accounts = new Accounts(this.Provider);
         this.Web3 = new web3(this.Provider);
@@ -122,6 +117,7 @@ export class ExposureAdmin {
             })
 
         }
+        await sendDiscordWebook(`Finished initializing basket`)
         await sleep(2000)
     }
 

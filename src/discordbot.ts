@@ -110,7 +110,7 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
                 return
             msg.channel.send("Starting new ETF")
             let address = await e.newETF(data[2], data[3])
-            msg.channel.send("New ETF initialized at " + address)
+            msg.channel.send("New basket initialized at " + address)
         },
         "editconfig": async (msg: any, data: string[]): Promise<void> => {
             await editConfig(data[2], data[3])

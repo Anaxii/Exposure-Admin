@@ -1,6 +1,5 @@
 export interface Config {
     privateKey: string;
-    init: boolean;
     bot: boolean;
     apiPort: number;
     reboot: boolean;
@@ -11,12 +10,7 @@ export interface Config {
     routerAddress: string;
     USDCAddress: string;
     APIURL: string;
-    shareCreation: boolean;
-    bias: Bias[];
-    sellBias: number;
-    buyBias: number;
     discordNotifications: boolean;
-    status: Status;
     accounts: Accounts[];
     WAVAX: WAVAX;
     tokens: Tokens[];
@@ -25,9 +19,6 @@ export interface Config {
 export interface Bias {
     buy: number;
     sell: number;
-}
-export interface Status {
-    epoch: boolean;
 }
 export interface Accounts {
     publicKey: string;
