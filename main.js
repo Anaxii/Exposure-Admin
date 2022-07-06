@@ -20,8 +20,7 @@ const ExposureInfo_1 = require("./src/ExposureInfo");
             return;
         const e = yield new exposureAdmin_1.ExposureAdmin(config);
         const i = new ExposureInfo_1.ExposureInfo(e);
-        (0, discordbot_1.discordBot)(config.discordToken, e, i, config.discordNotifications);
-        console.log(e.Baskets);
+        discordbot_1.discordBot(config.discordToken, e, i, config.discordNotifications);
     });
 }());
 function getConfig() {

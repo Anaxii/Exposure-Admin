@@ -143,11 +143,20 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
             for (const i in e.Baskets) {
                 let token_list = ""
                 for (const j in e.Baskets[i].tokens) {
-                    token_list += e.Baskets[i].tokens[j].token + "\n"
+                    token_list += e.Baskets[i].tokens[j].token + " | "
                 }
-                basket_list += `${e.Baskets[i].name} [${e.Baskets[i].symbol}] | Address: ${i}\n**Tokens: (${e.Baskets[i].tokens.length})**\n${token_list}`
+                basket_list += `**${e.Baskets[i].name} [${e.Baskets[i].symbol}] | Address: ${i}**\nTokens: (${e.Baskets[i].tokens.length})\n${token_list}\n`
             }
             msg.channel.send(basket_list)
+        },
+        "changebasket": async (msg: any, data: string[]): Promise<void> => {
+            console.log(e.Baskets)
+            msg.channel.send("Current basket: " + e.ExposureAddress)
+            // @ts-ignore
+            // @ts-ignore
+            await e.switchBasket(Object.keys(e.Baskets)[data[2]])
+            // console.log(data[2])
+            msg.channel.send("New basket: " + e.ExposureAddress)
         },
         "help": async (msg: any): Promise<void> => {
             await msg.channel.send("epoch \nepochinfo \nbasketaddress \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ")
@@ -158,14 +167,14 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
         console.log('Bot loaded');
     });
 
-    client.on('messageCreate',  (msg: any) => {
+    client.on('messageCreate', (msg: any) => {
             msg.content = msg.content.toLowerCase()
             const data = msg.content.split(" ")
             if (data[0] != "!e" || data.length === 1)
                 return
 
-        if (commands[data[1]])
-            commands[data[1]](msg, data)
+            if (commands[data[1]])
+                commands[data[1]](msg, data)
         }
     );
 

@@ -1,9 +1,9 @@
 import {Config} from "./src/types";
-const fs = require('fs')
-
 import {discordBot} from "./src/discordbot";
 import {ExposureAdmin} from "./src/exposureAdmin";
 import {ExposureInfo} from "./src/ExposureInfo";
+
+const fs = require('fs')
 
 (async function () {
     const config = await getConfig()
@@ -12,7 +12,6 @@ import {ExposureInfo} from "./src/ExposureInfo";
     const e = await new ExposureAdmin(config)
     const i = new ExposureInfo(e)
     discordBot(config.discordToken, e, i, config.discordNotifications)
-    console.log(e.Baskets)
 }())
 
 async function getConfig(): Promise<Config | null> {

@@ -4,12 +4,11 @@
     <list default="true" id="05d7f3a3-8192-4818-bc10-1d256435cbc2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ExposureInfo.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/ExposureInfo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/discordbot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/discordbot.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/discordbot.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/discordbot.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/exposureAdmin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/exposureAdmin.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/exposureAdmin.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/exposureAdmin.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/steps.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/steps.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,9 +32,11 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\WebStorm 2020.3.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -65,7 +66,7 @@
       <updated>1656888043559</updated>
       <workItem from="1656888044705" duration="184000" />
       <workItem from="1656888303823" duration="26730000" />
-      <workItem from="1657055942768" duration="8926000" />
+      <workItem from="1657055942768" duration="13260000" />
     </task>
     <servers />
   </component>

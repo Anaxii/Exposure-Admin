@@ -112,7 +112,7 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                     DiscordNotifications = false;
                     msg.channel.send("Webhook notifications turned off");
                 }
-                yield (0, util_1.editConfig)("discordNotifications", DiscordNotifications);
+                yield util_1.editConfig("discordNotifications", DiscordNotifications);
             }),
             "newetf": (msg, data) => __awaiter(this, void 0, void 0, function* () {
                 if (!data[2] && !data[3])
@@ -122,12 +122,12 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 msg.channel.send("New basket initialized at " + address);
             }),
             "editconfig": (msg, data) => __awaiter(this, void 0, void 0, function* () {
-                yield (0, util_1.editConfig)(data[2], data[3]);
+                yield util_1.editConfig(data[2], data[3]);
                 msg.channel.send("Updated config for " + data[2]);
             }),
             "reboot": (msg) => __awaiter(this, void 0, void 0, function* () {
                 yield msg.channel.send("Rebooting bot");
-                yield (0, util_1.editConfig)("reboot", true);
+                yield util_1.editConfig("reboot", true);
                 process.exit(1);
             }),
             "mint": (msg, data) => __awaiter(this, void 0, void 0, function* () {
@@ -152,11 +152,20 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 for (const i in e.Baskets) {
                     let token_list = "";
                     for (const j in e.Baskets[i].tokens) {
-                        token_list += e.Baskets[i].tokens[j].token + "\n";
+                        token_list += e.Baskets[i].tokens[j].token + " | ";
                     }
-                    basket_list += `${e.Baskets[i].name} [${e.Baskets[i].symbol}] | Address: ${i}\n**Tokens: (${e.Baskets[i].tokens.length})**\n${token_list}`;
+                    basket_list += `**${e.Baskets[i].name} [${e.Baskets[i].symbol}] | Address: ${i}**\nTokens: (${e.Baskets[i].tokens.length})\n${token_list}\n`;
                 }
                 msg.channel.send(basket_list);
+            }),
+            "changebasket": (msg, data) => __awaiter(this, void 0, void 0, function* () {
+                console.log(e.Baskets);
+                msg.channel.send("Current basket: " + e.ExposureAddress);
+                // @ts-ignore
+                // @ts-ignore
+                yield e.switchBasket(Object.keys(e.Baskets)[data[2]]);
+                // console.log(data[2])
+                msg.channel.send("New basket: " + e.ExposureAddress);
             }),
             "help": (msg) => __awaiter(this, void 0, void 0, function* () {
                 yield msg.channel.send("epoch \nepochinfo \nbasketaddress \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ");

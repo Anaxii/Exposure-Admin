@@ -55,6 +55,7 @@ class ExposureAdmin {
                     this.Provider = new HDWalletProvider(key, this.API);
                     this.Accounts = new Accounts(this.Provider);
                     this.Web3 = new web3(this.Provider);
+                    this.ExposureObject = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress);
                     ok(true);
                 }
                 catch (_a) {
@@ -69,11 +70,11 @@ class ExposureAdmin {
                 return;
             const factory = new this.Web3.eth.Contract(ExposureFactoryABI, this.ExposureFactoryAddress);
             const newBasket = yield factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({ from: this.PublicKey });
-            yield (0, discordbot_1.sendDiscordWebook)(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`);
+            yield discordbot_1.sendDiscordWebook(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`);
             this.ExposureAddress = newBasket.events[0].address;
             this.ExposureObject = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress);
-            yield (0, util_1.editConfig)("exposureAddress", this.ExposureAddress);
-            yield (0, util_1.sleep)(1000);
+            yield util_1.editConfig("exposureAddress", this.ExposureAddress);
+            yield util_1.sleep(1000);
             yield this.initExposure();
             return this.ExposureAddress;
         });
@@ -83,7 +84,7 @@ class ExposureAdmin {
             let currentEpoch = yield this.ExposureObject.methods.epoch().call();
             const exposureSteps = new steps_1.ExposureSteps(this.ExposureObject, this.PublicKey, this.Tokens);
             for (step; step <= maxStep; step++) {
-                yield (0, util_1.sleep)(2000);
+                yield util_1.sleep(2000);
                 currentEpoch = yield this.ExposureObject.methods.epoch().call();
                 if (step == 4)
                     yield this.ExposureObject.methods.changeIndexDivisor(0, (100000000 + "0".repeat(18).toString())).send({ from: this.PublicKey }).catch((err) => {
@@ -91,29 +92,29 @@ class ExposureAdmin {
                     });
                 console.log("Starting step", step);
                 yield exposureSteps.executeStep(step).then(() => __awaiter(this, void 0, void 0, function* () {
-                    yield (0, discordbot_1.sendDiscordWebook)(`Step ${step} done`);
+                    yield discordbot_1.sendDiscordWebook(`Step ${step} done`);
                     console.log(step, "done");
-                    yield (0, util_1.sleep)(1000);
+                    yield util_1.sleep(1000);
                 })).catch((err) => __awaiter(this, void 0, void 0, function* () {
                     let error = err.toString().split("\n");
                     if (!error[0])
                         return;
-                    yield (0, discordbot_1.sendDiscordWebook)(`Step ${step} error: ${error[0]}`);
+                    yield discordbot_1.sendDiscordWebook(`Step ${step} error: ${error[0]}`);
                     console.log(error[0]);
-                    yield (0, util_1.sleep)(15000);
+                    yield util_1.sleep(15000);
                     step = Number(yield this.ExposureObject.methods.rebalanceStep().call()) - 1;
                     console.log(step + 1);
                 }));
             }
-            yield (0, discordbot_1.sendDiscordWebook)(`Finished initializing basket`);
-            yield (0, util_1.sleep)(2000);
+            yield discordbot_1.sendDiscordWebook(`Finished initializing basket`);
+            yield util_1.sleep(2000);
         });
     }
     initExposure() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.changeAccount(this.PrivateKey)))
                 return;
-            yield (0, util_1.sleep)(1000);
+            yield util_1.sleep(1000);
             yield this.ExposureObject.methods.startETF().send({ from: this.PublicKey }).catch(() => {
                 console.log("Basket already started");
             });
@@ -130,10 +131,10 @@ class ExposureAdmin {
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.changeAccount(this.PrivateKey)))
                 return;
-            yield (0, discordbot_1.sendDiscordWebook)("Starting next epoch | Current epoch: " + this.CurrentEpoch);
+            yield discordbot_1.sendDiscordWebook("Starting next epoch | Current epoch: " + this.CurrentEpoch);
             yield this.runSteps(0, 10);
             this.CurrentEpoch = yield this.ExposureObject.methods.epoch().call();
-            yield (0, discordbot_1.sendDiscordWebook)("New epoch: " + this.CurrentEpoch);
+            yield discordbot_1.sendDiscordWebook("New epoch: " + this.CurrentEpoch);
         });
     }
     burnShares(amount) {
@@ -177,6 +178,15 @@ class ExposureAdmin {
                 shareBalance = yield this.ExposureObject.methods.balanceOf(this.PublicKey).call();
                 resolve(shareBalance);
             }));
+        });
+    }
+    switchBasket(basket) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.Baskets[basket])
+                return;
+            this.Tokens = this.Baskets[basket].Tokens;
+            this.ExposureAddress = basket;
+            yield this.changeAccount(this.PrivateKey);
         });
     }
 }

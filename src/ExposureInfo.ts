@@ -54,7 +54,7 @@ export class ExposureInfo {
             if (!this.e.CurrentEpoch)
                 this.e.CurrentEpoch = await this.e.ExposureObject.methods.epoch().call()
             let divisor = await this.e.ExposureObject.methods.getIndexDivisor(this.e.CurrentEpoch).call().catch((err: any) => console.log(err))
-            divisor = Number(BigInt(divisor) / BigInt(10**14)) / (10**4)
+            divisor = Number(BigInt(divisor) / BigInt(10 ** 14)) / (10 ** 4)
             let v = 0
             for (const i in this.e.Tokens) {
                 let val = await this.e.ExposureObject.methods.getTokenMarketCap(this.e.CurrentEpoch, this.e.Tokens[i].tokenAddress).call().catch((err: any) => console.log(err))
@@ -85,7 +85,7 @@ export class ExposureInfo {
             let v = 0
             for (const i in this.e.Tokens) {
                 if (tracked) {
-                    let wavaxPrice = await this.getPrice(this.e.WAVAX.tokenAddress, this.e.WAVAX.pairAddress,  false, 0)
+                    let wavaxPrice = await this.getPrice(this.e.WAVAX.tokenAddress, this.e.WAVAX.pairAddress, false, 0)
                     let price = await this.getPrice(this.e.Tokens[i].tokenAddress, this.e.Tokens[i].pairAddress, true, wavaxPrice)
                     let portion = await this.e.ExposureObject.methods.getTokenPortions(this.e.CurrentEpoch, this.e.Tokens[i].tokenAddress).call()
                     v += ((price) * (portion)) / 1e18
@@ -109,7 +109,7 @@ export class ExposureInfo {
         })
     }
 
-     async getBalanceOfAddress(tokenAddress: string, publicKey: string) {
+    async getBalanceOfAddress(tokenAddress: string, publicKey: string) {
         return new Promise(async resolve => {
             let token = new this.e.Web3.eth.Contract(ERC20ABI, tokenAddress)
             let tokenBalance = await token.methods.balanceOf(publicKey).call()
@@ -119,7 +119,7 @@ export class ExposureInfo {
 
     async getAllExposureTokenBalances(accountAddress: string): Promise<{ [key: string]: number }> {
         return new Promise(async resolve => {
-            let balances: {[key: string]: any} = {
+            let balances: { [key: string]: any } = {
                 'WAVAX': await this.getBalanceOfAddress(this.e.WAVAX.tokenAddress, accountAddress),
                 'USDC': await this.getBalanceOfAddress(this.e.USDCAddress, accountAddress)
             }
@@ -135,8 +135,8 @@ export class ExposureInfo {
             let wavaxPrice: number = await this.getPrice(this.e.WAVAX.tokenAddress, this.e.WAVAX.pairAddress, false, 0)
             let wavaxSupply: number = await this.getSupply(this.e.WAVAX.tokenAddress)
             wavaxSupply *= wavaxPrice
-            let prices: {[key: string]: any} = {"WAVAX/USDC": wavaxPrice}
-            let mcaps: {[key: string]: any} = {"WAVAX/USDC": wavaxSupply}
+            let prices: { [key: string]: any } = {"WAVAX/USDC": wavaxPrice}
+            let mcaps: { [key: string]: any } = {"WAVAX/USDC": wavaxSupply}
             for (const i in this.e.Tokens) {
                 let price = await this.getPrice(this.e.Tokens[i].tokenAddress, this.e.Tokens[i].pairAddress, true, wavaxPrice)
                 let supply = await this.getSupply(this.e.Tokens[i].tokenAddress)
@@ -176,7 +176,7 @@ export class ExposureInfo {
             let nav = await this.getNAV()
             let prices = await this.getPricesAndMcaps()
             let p = "**Prices**: \n"
-            let pa: {[key: string]: any} = {}
+            let pa: { [key: string]: any } = {}
             let ma: any[any] = []
             let m = "**MCAPs**: \n"
             for (const i in prices.prices) {
@@ -186,7 +186,7 @@ export class ExposureInfo {
                 ma[i] = prices.prices[i]
             }
             let ep = "**Exposure Prices**: \n"
-            let xp: {[key: string]: any} = {}
+            let xp: { [key: string]: any } = {}
             for (const i in this.e.Tokens) {
                 let pr = await this.getExposurePrice(this.e.Tokens[i].tokenAddress)
                 ep += this.e.Tokens[i].token + ": " + pr.toLocaleString() + "\n"
@@ -200,7 +200,7 @@ export class ExposureInfo {
             let info = "Index Price:                                $" + ind.toLocaleString() + "\nPortion Index Price:                  $" + portion.toLocaleString() + "\nTracked Portion Index Price:   $" + tportion.toLocaleString() + "\nTrue Index Price:                       $" + actual.toLocaleString()
                 + "\nNAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + p + ep
             if (notif)
-            await sendDiscordWebook(info)
+                await sendDiscordWebook(info)
             ok(info)
         })
     }

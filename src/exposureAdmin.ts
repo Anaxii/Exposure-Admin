@@ -1,6 +1,6 @@
 import {editConfig, sleep} from "./util";
 import {ExposureSteps} from "./steps";
-import {TradingAccounts, Bias, Config, Tokens, WAVAX} from "./types";
+import {Config, Tokens, TradingAccounts, WAVAX} from "./types";
 import {sendDiscordWebook} from "./discordbot";
 
 const HDWalletProvider = require("@truffle/hdwallet-provider");
@@ -28,11 +28,11 @@ export class ExposureAdmin {
     Status: any;
     APIPort: number;
     ExposureObject: any
-    private DiscordBot: string;
-    private PrivateKey: string;
     API: string;
     CurrentEpoch: any;
     Baskets: { [key: string]: any }
+    private DiscordBot: string;
+    private PrivateKey: string;
 
     constructor(config: Config) {
         this.RunBot = config.bot
@@ -58,16 +58,13 @@ export class ExposureAdmin {
         this.setInitialEpoch().then(r => this.CurrentEpoch = r)
     }
 
-    private async setInitialEpoch() {
-        this.CurrentEpoch = await this.ExposureObject.methods.epoch().call()
-    }
-
     async changeAccount(key: string): Promise<boolean> {
         return new Promise(async (ok, reject) => {
             try {
                 this.Provider = new HDWalletProvider(key, this.API);
                 this.Accounts = new Accounts(this.Provider);
                 this.Web3 = new web3(this.Provider);
+                this.ExposureObject = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress)
                 ok(true)
             } catch {
                 reject(false)
@@ -87,38 +84,6 @@ export class ExposureAdmin {
         await sleep(1000)
         await this.initExposure()
         return this.ExposureAddress
-    }
-
-    private async runSteps(step: number, maxStep: number) {
-        let currentEpoch = await this.ExposureObject.methods.epoch().call()
-        const exposureSteps = new ExposureSteps(this.ExposureObject, this.PublicKey, this.Tokens)
-        for (step; step <= maxStep; step++) {
-            await sleep(2000)
-            currentEpoch = await this.ExposureObject.methods.epoch().call()
-            if (step == 4)
-                await this.ExposureObject.methods.changeIndexDivisor(0, (100000000 + "0".repeat(18).toString())).send({from: this.PublicKey}).catch((err: any) => {
-                    console.log("STEP 4 chaing index diviso", err)
-                })
-            console.log("Starting step", step)
-            await exposureSteps.executeStep(step).then(async () => {
-                await sendDiscordWebook(`Step ${step} done`)
-                console.log(step, "done")
-                await sleep(1000)
-            }).catch(async (err) => {
-                let error = err.toString().split("\n")
-                if (!error[0])
-                    return
-                await sendDiscordWebook(`Step ${step} error: ${error[0]}`)
-                console.log(error[0])
-
-                await sleep(15000)
-                step = Number(await this.ExposureObject.methods.rebalanceStep().call()) - 1
-                console.log(step + 1)
-            })
-
-        }
-        await sendDiscordWebook(`Finished initializing basket`)
-        await sleep(2000)
     }
 
     async initExposure() {
@@ -166,7 +131,7 @@ export class ExposureAdmin {
         return new Promise(async resolve => {
             let shareBalance = await this.ExposureObject.methods.balanceOf(this.PublicKey).call()
             this.CurrentEpoch = await this.ExposureObject.methods.epoch().call()
-            let portions: {[key: string]: any} = {}
+            let portions: { [key: string]: any } = {}
             let err
             for (const i in this.Tokens) {
                 let portion = await this.ExposureObject.methods.getTokenPortions(this.CurrentEpoch, this.Tokens[i].tokenAddress).call()
@@ -188,8 +153,49 @@ export class ExposureAdmin {
         })
     }
 
+    async switchBasket(basket: string) {
+        if (!this.Baskets[basket])
+            return
+        this.Tokens = this.Baskets[basket].Tokens
+        this.ExposureAddress = basket
+        await this.changeAccount(this.PrivateKey)
+    }
 
+    private async setInitialEpoch() {
+        this.CurrentEpoch = await this.ExposureObject.methods.epoch().call()
+    }
 
+    private async runSteps(step: number, maxStep: number) {
+        let currentEpoch = await this.ExposureObject.methods.epoch().call()
+        const exposureSteps = new ExposureSteps(this.ExposureObject, this.PublicKey, this.Tokens)
+        for (step; step <= maxStep; step++) {
+            await sleep(2000)
+            currentEpoch = await this.ExposureObject.methods.epoch().call()
+            if (step == 4)
+                await this.ExposureObject.methods.changeIndexDivisor(0, (100000000 + "0".repeat(18).toString())).send({from: this.PublicKey}).catch((err: any) => {
+                    console.log("STEP 4 chaing index diviso", err)
+                })
+            console.log("Starting step", step)
+            await exposureSteps.executeStep(step).then(async () => {
+                await sendDiscordWebook(`Step ${step} done`)
+                console.log(step, "done")
+                await sleep(1000)
+            }).catch(async (err) => {
+                let error = err.toString().split("\n")
+                if (!error[0])
+                    return
+                await sendDiscordWebook(`Step ${step} error: ${error[0]}`)
+                console.log(error[0])
+
+                await sleep(15000)
+                step = Number(await this.ExposureObject.methods.rebalanceStep().call()) - 1
+                console.log(step + 1)
+            })
+
+        }
+        await sendDiscordWebook(`Finished initializing basket`)
+        await sleep(2000)
+    }
 }
 
 
