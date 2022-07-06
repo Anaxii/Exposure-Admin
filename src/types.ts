@@ -11,7 +11,7 @@ export interface Config {
     USDCAddress: string;
     APIURL: string;
     discordNotifications: boolean;
-    accounts: Accounts[];
+    accounts: TradingAccounts[];
     WAVAX: WAVAX;
     tokens: Tokens[];
     baskets: {[key: string]: any}
@@ -20,7 +20,7 @@ export interface Bias {
     buy: number;
     sell: number;
 }
-export interface Accounts {
+export interface TradingAccounts {
     publicKey: string;
     privateKey: string;
 }

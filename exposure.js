@@ -39,7 +39,7 @@ class Exposure {
         this.APIPort = config.apiPort;
         this.ShareCreation = config.shareCreation;
         this.Provider = new HDWalletProvider(this.PrivateKey, this.API);
-        this.Accounts = new Accounts(this.Provider);
+        this.TradingAccounts = new Accounts(this.Provider);
         this.Web3 = new web3(this.Provider);
         this.ExposureABI = ExposureABI;
         this.ExposureObject = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress);
@@ -53,7 +53,7 @@ class Exposure {
             return new Promise((ok, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     this.Provider = new HDWalletProvider(key, this.API);
-                    this.Accounts = new Accounts(this.Provider);
+                    this.TradingAccounts = new Accounts(this.Provider);
                     this.Web3 = new web3(this.Provider);
                     ok(true);
                 }

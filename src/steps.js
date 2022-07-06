@@ -59,7 +59,7 @@ class ExposureSteps {
                             yield this.Exposure.methods.updateTokenMarketCap().send({ from: this.PublicKey }).catch((err) => {
                                 reject(err);
                             });
-                            yield util_1.sleep(3000);
+                            yield (0, util_1.sleep)(3000);
                         }
                         ok(true);
                     }));

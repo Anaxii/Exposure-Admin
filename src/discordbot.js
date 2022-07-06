@@ -112,22 +112,22 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                     DiscordNotifications = false;
                     msg.channel.send("Webhook notifications turned off");
                 }
-                yield util_1.editConfig("discordNotifications", DiscordNotifications);
+                yield (0, util_1.editConfig)("discordNotifications", DiscordNotifications);
             }),
             "newetf": (msg, data) => __awaiter(this, void 0, void 0, function* () {
                 if (!data[2] && !data[3])
                     return;
                 msg.channel.send("Starting new ETF");
                 let address = yield e.newETF(data[2], data[3]);
-                msg.channel.send("New ETF initialized at " + address);
+                msg.channel.send("New basket initialized at " + address);
             }),
             "editconfig": (msg, data) => __awaiter(this, void 0, void 0, function* () {
-                yield util_1.editConfig(data[2], data[3]);
+                yield (0, util_1.editConfig)(data[2], data[3]);
                 msg.channel.send("Updated config for " + data[2]);
             }),
             "reboot": (msg) => __awaiter(this, void 0, void 0, function* () {
                 yield msg.channel.send("Rebooting bot");
-                yield util_1.editConfig("reboot", true);
+                yield (0, util_1.editConfig)("reboot", true);
                 process.exit(1);
             }),
             "mint": (msg, data) => __awaiter(this, void 0, void 0, function* () {

@@ -1,6 +1,6 @@
 import {editConfig, sleep} from "./util";
 import {ExposureSteps} from "./steps";
-import {Accounts, Bias, Config, Tokens, WAVAX} from "./types";
+import {TradingAccounts, Bias, Config, Tokens, WAVAX} from "./types";
 import {sendDiscordWebook} from "./discordbot";
 
 const HDWalletProvider = require("@truffle/hdwallet-provider");
@@ -24,7 +24,7 @@ export class ExposureAdmin {
     ExposureABI: any;
     PublicKey: any;
     RunBot: boolean;
-    TestnetAccounts: Accounts[];
+    TestnetAccounts: TradingAccounts[];
     Status: any;
     APIPort: number;
     ExposureObject: any
@@ -146,7 +146,7 @@ export class ExposureAdmin {
         await sendDiscordWebook("New epoch: " + this.CurrentEpoch)
     }
 
-    async burnShares(amount: bigint) {
+    async burnShares(amount: bigint): Promise<bigint> {
         return new Promise(async resolve => {
             let shareBalance = await this.ExposureObject.methods.balanceOf(this.PublicKey).call()
             await this.ExposureObject.methods.approve(this.ExposureAddress, amount).send({from: this.PublicKey}).catch((err: any) => {

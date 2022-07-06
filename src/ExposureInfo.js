@@ -155,7 +155,7 @@ class ExposureInfo {
                     let supply = yield this.getSupply(this.e.Tokens[i].tokenAddress);
                     prices[this.e.Tokens[i].name] = price;
                     mcaps[this.e.Tokens[i].name] = supply * price;
-                    yield util_1.sleep(100);
+                    yield (0, util_1.sleep)(100);
                 }
                 resolve({ prices, mcaps });
             }));
@@ -215,7 +215,7 @@ class ExposureInfo {
                 let info = "Index Price:                                $" + ind.toLocaleString() + "\nPortion Index Price:                  $" + portion.toLocaleString() + "\nTracked Portion Index Price:   $" + tportion.toLocaleString() + "\nTrue Index Price:                       $" + actual.toLocaleString()
                     + "\nNAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + p + ep;
                 if (notif)
-                    yield discordbot_1.sendDiscordWebook(info);
+                    yield (0, discordbot_1.sendDiscordWebook)(info);
                 ok(info);
             }));
         });
