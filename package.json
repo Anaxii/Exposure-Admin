@@ -1,0 +1,27 @@
+{
+  "name": "exposureadmin",
+  "version": "1.0.0",
+  "description": "rename example_config.json to config.json",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anaxii/Exposure-Admin.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Anaxii/Exposure-Admin/issues"
+  },
+  "homepage": "https://github.com/Anaxii/Exposure-Admin#readme",
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^2.0.10",
+    "discord.js": "^13.6.0",
+    "fs": "^0.0.1-security",
+    "typescript": "^4.7.4",
+    "web3": "^1.7.4",
+    "web3-eth-accounts": "^1.7.4"
+  }
+}
