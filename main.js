@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require('fs');
 const discordbot_1 = require("./src/discordbot");
 const exposureAdmin_1 = require("./src/exposureAdmin");
 const ExposureInfo_1 = require("./src/ExposureInfo");
+const fs = require('fs');
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         const config = yield getConfig();
@@ -20,7 +20,8 @@ const ExposureInfo_1 = require("./src/ExposureInfo");
             return;
         const e = yield new exposureAdmin_1.ExposureAdmin(config);
         const i = new ExposureInfo_1.ExposureInfo(e);
-        discordbot_1.discordBot(config.discordToken, e, i, config.discordNotifications);
+        (0, discordbot_1.discordBot)(config.discordToken, e, i, config.discordNotifications);
+        console.log(yield i.calculateTradeAmount(true));
     });
 }());
 function getConfig() {

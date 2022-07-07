@@ -112,7 +112,7 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                     DiscordNotifications = false;
                     msg.channel.send("Webhook notifications turned off");
                 }
-                yield util_1.editConfig("discordNotifications", DiscordNotifications);
+                yield (0, util_1.editConfig)("discordNotifications", DiscordNotifications);
             }),
             "newetf": (msg, data) => __awaiter(this, void 0, void 0, function* () {
                 if (!data[2] && !data[3])
@@ -122,12 +122,12 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 msg.channel.send("New basket initialized at " + address);
             }),
             "editconfig": (msg, data) => __awaiter(this, void 0, void 0, function* () {
-                yield util_1.editConfig(data[2], data[3]);
+                yield (0, util_1.editConfig)(data[2], data[3]);
                 msg.channel.send("Updated config for " + data[2]);
             }),
             "reboot": (msg) => __awaiter(this, void 0, void 0, function* () {
                 yield msg.channel.send("Rebooting bot");
-                yield util_1.editConfig("reboot", true);
+                yield (0, util_1.editConfig)("reboot", true);
                 process.exit(1);
             }),
             "mint": (msg, data) => __awaiter(this, void 0, void 0, function* () {
@@ -167,8 +167,41 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 // console.log(data[2])
                 msg.channel.send("New basket: " + e.ExposureAddress);
             }),
+            "tobuy": (msg) => __awaiter(this, void 0, void 0, function* () {
+                let amounts = yield info.calculateTotalBuyAmount();
+                let message = "";
+                let totalUSD = 0;
+                for (const i in amounts) {
+                    totalUSD += amounts[i].toTradeUSD;
+                    message += `${amounts[i].name} | Buying ${amounts[i].amountToTrade} ($${amounts[i].toTradeUSD.toLocaleString()}) | Current Price: ${amounts[i].currentPrice.toLocaleString()} | Est New Price: ${amounts[i].estimatedNewPrice.toLocaleString()}\n`;
+                }
+                msg.channel.send(`Total Buy: $${totalUSD.toLocaleString()}\n`);
+            }),
+            "tosell": (msg) => __awaiter(this, void 0, void 0, function* () {
+                let amounts = yield info.calculateTotalSellAmount();
+                let message = "";
+                let totalUSD = 0;
+                for (const i in amounts) {
+                    totalUSD += amounts[i].toTradeUSD;
+                    message += `${amounts[i].name} | Selling ${amounts[i].amountToTrade} ($${amounts[i].toTradeUSD.toLocaleString()}) | Current Price: ${amounts[i].currentPrice.toLocaleString()} | Est New Price: ${amounts[i].estimatedNewPrice.toLocaleString()}\n`;
+                }
+                msg.channel.send(`Total Sell: $${totalUSD.toLocaleString()}\n`);
+            }),
+            "rebsum": (msg) => __awaiter(this, void 0, void 0, function* () {
+                let totalBuy = 0;
+                let totalSell = 0;
+                let buys = yield info.calculateTradeAmount(true);
+                for (const i in buys) {
+                    totalBuy += buys[i].toTradeUSD;
+                }
+                let sells = yield info.calculateTradeAmount(false);
+                for (const i in sells) {
+                    totalSell += sells[i].toTradeUSD;
+                }
+                msg.channel.send(`Total Sell: $${totalSell.toLocaleString()}\nTotal Buy: $${totalBuy.toLocaleString()}\nCost: $${(totalBuy - totalSell).toLocaleString()}`);
+            }),
             "help": (msg) => __awaiter(this, void 0, void 0, function* () {
-                yield msg.channel.send("epoch \nepochinfo \nbasketaddress \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ");
+                yield msg.channel.send("epoch \nepochinfo \nbasketaddress \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance \nrebsum \ntobuy \ntosell");
             })
         };
         client.once('ready', () => {

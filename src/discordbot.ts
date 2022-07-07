@@ -8,13 +8,13 @@ const webhookClient = new WebhookClient({
     token: "DPQPMemPDzS_cIzuP4QP8Tqpy-BmI4iy5Ea35i58YuJP1q9jxeslPwGh2fPRZP0vfZ6w"
 });
 
-export async function sendDiscordWebook(message: string) {
+export async function sendDiscordWebook(message: string): Promise<void> {
     await webhookClient.send({
         content: message,
     });
 }
 
-export async function discordBot(discordToken: string, e: ExposureAdmin, info: ExposureInfo, DiscordNotifications: boolean) {
+export async function discordBot(discordToken: string, e: ExposureAdmin, info: ExposureInfo, DiscordNotifications: boolean): Promise<void> {
     const {Client, Intents} = require('discord.js');
     const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 
@@ -29,7 +29,6 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
         },
         "basketaddress": async (msg: any): Promise<void> => {
             msg.channel.send(e.ExposureAddress)
-
         },
         "nextepoch": async (): Promise<void> => {
             await info.epochNotification(true)
@@ -138,7 +137,6 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
             await msg.channel.send("Balance: " + (Number(BigInt(shareBalance) / BigInt(10 ** 14)) / (10 ** 4)).toLocaleString())
         },
         "baskets": async (msg: any): Promise<void> => {
-            console.log(e.Baskets)
             let basket_list = ""
             for (const i in e.Baskets) {
                 let token_list = ""
@@ -150,17 +148,50 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
             msg.channel.send(basket_list)
         },
         "changebasket": async (msg: any, data: string[]): Promise<void> => {
-            console.log(e.Baskets)
             msg.channel.send("Current basket: " + e.ExposureAddress)
-            // @ts-ignore
-            // @ts-ignore
-            await e.switchBasket(Object.keys(e.Baskets)[data[2]])
-            // console.log(data[2])
+            await e.switchBasket(Object.keys(e.Baskets)[Number(data[2])])
             msg.channel.send("New basket: " + e.ExposureAddress)
         },
+        "tobuy": async (msg: any): Promise<void> => {
+            let tradeMessage = await getTradeMessage(true)
+            msg.channel.send(tradeMessage)
+        },
+        "tosell": async (msg: any): Promise<void> => {
+            let tradeMessage = await getTradeMessage(false)
+            msg.channel.send(tradeMessage)
+        },
+        "rebsum": async (msg: any): Promise<void> => {
+            let totalBuy = 0
+            let totalSell = 0
+            let buys = await info.calculateTradeAmount(true)
+            for (const i in buys) {
+                totalBuy += buys[i].toTradeUSD
+            }
+            let sells = await info.calculateTradeAmount(false)
+            for (const i in sells) {
+                totalSell += sells[i].toTradeUSD
+            }
+            msg.channel.send(`Total Sell: $${totalSell.toLocaleString()}\nTotal Buy: $${totalBuy.toLocaleString()}\nCost: $${(totalBuy - totalSell).toLocaleString()}`)
+        },
         "help": async (msg: any): Promise<void> => {
-            await msg.channel.send("epoch \nepochinfo \nbasketaddress \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance ")
+            await msg.channel.send("epoch \nepochinfo \nbasketaddress \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance \nrebsum \ntobuy \ntosell")
         }
+    }
+
+    async function getTradeMessage(side: boolean) {
+        return new Promise(async (resolve, reject) => {
+            let amounts = await info.calculateTradeAmount(side)
+            let sideMessage = "Selling"
+            if (side)
+                sideMessage = "Buying"
+            let message = ""
+            let totalUSD = 0
+            for (const i in amounts) {
+                totalUSD += amounts[i].toTradeUSD
+                message += `${amounts[i].name} | ${sideMessage} ${amounts[i].amountToTrade} ($${amounts[i].toTradeUSD.toLocaleString()}) | Current Price: ${amounts[i].currentPrice.toLocaleString()} | Est New Price: ${amounts[i].estimatedNewPrice.toLocaleString()}\n`
+            }
+            resolve(`Total ${sideMessage}: $${totalUSD.toLocaleString()}\n` + message)
+        })
     }
 
     client.once('ready', () => {

@@ -2,3 +2,5 @@ json_storage/config.json
 node_modules
 package-lock.json
 #rename example_config.json to config.json
+src/decorators.ts
+src/decorators.js

@@ -43,3 +43,10 @@ export interface Tokens {
     tokenAddress: string;
     quoteAddress: string;
 }
+export interface ExposureToTrade {
+    name: string
+    amountToTrade: number
+    toTradeUSD: number
+    currentPrice: number
+    estimatedNewPrice: number
+}

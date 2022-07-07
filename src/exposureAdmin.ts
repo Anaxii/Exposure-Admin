@@ -72,13 +72,21 @@ export class ExposureAdmin {
         })
     }
 
-    async newETF(etfName: string, etfSymbol: string) {
+    async newETF(etfName: string, etfSymbol: string): Promise<string | void> {
         if (!await this.changeAccount(this.PrivateKey))
             return
         const factory = new this.Web3.eth.Contract(ExposureFactoryABI, this.ExposureFactoryAddress)
-        const newBasket = await factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({from: this.PublicKey})
+        let newBasket
+        try {
+            newBasket = await factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({from: this.PublicKey})
+        } catch {
+            console.error("Failed to deploy new basket")
+            return
+        }
+        if (newBasket.events.length == 0)
+            return
+        this.ExposureAddress = newBasket?.events[0]?.address || "Bad address"
         await sendDiscordWebook(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`)
-        this.ExposureAddress = newBasket.events[0].address
         this.ExposureObject = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress)
         await editConfig("exposureAddress", this.ExposureAddress)
         await sleep(1000)
@@ -86,7 +94,7 @@ export class ExposureAdmin {
         return this.ExposureAddress
     }
 
-    async initExposure() {
+    async initExposure(): Promise<void> {
         if (!await this.changeAccount(this.PrivateKey))
             return
         await sleep(1000)
@@ -102,7 +110,7 @@ export class ExposureAdmin {
         })
     }
 
-    async nextEpoch() {
+    async nextEpoch(): Promise<void> {
         if (!await this.changeAccount(this.PrivateKey))
             return
         await sendDiscordWebook("Starting next epoch | Current epoch: " + this.CurrentEpoch)
@@ -153,7 +161,7 @@ export class ExposureAdmin {
         })
     }
 
-    async switchBasket(basket: string) {
+    async switchBasket(basket: string): Promise<void> {
         if (!this.Baskets[basket])
             return
         this.Tokens = this.Baskets[basket].Tokens
@@ -162,7 +170,7 @@ export class ExposureAdmin {
     }
 
     private async setInitialEpoch() {
-        this.CurrentEpoch = await this.ExposureObject.methods.epoch().call()
+        return await this.ExposureObject.methods.epoch().call()
     }
 
     private async runSteps(step: number, maxStep: number) {

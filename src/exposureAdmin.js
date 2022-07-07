@@ -43,11 +43,6 @@ class ExposureAdmin {
         this.Baskets = config.baskets;
         this.setInitialEpoch().then(r => this.CurrentEpoch = r);
     }
-    setInitialEpoch() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.CurrentEpoch = yield this.ExposureObject.methods.epoch().call();
-        });
-    }
     changeAccount(key) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((ok, reject) => __awaiter(this, void 0, void 0, function* () {
@@ -65,56 +60,35 @@ class ExposureAdmin {
         });
     }
     newETF(etfName, etfSymbol) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.changeAccount(this.PrivateKey)))
                 return;
             const factory = new this.Web3.eth.Contract(ExposureFactoryABI, this.ExposureFactoryAddress);
-            const newBasket = yield factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({ from: this.PublicKey });
-            yield discordbot_1.sendDiscordWebook(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`);
-            this.ExposureAddress = newBasket.events[0].address;
+            let newBasket;
+            try {
+                newBasket = yield factory.methods.deployNewAssetBasket(etfName, etfSymbol, this.RouterAddress, this.WAVAX.tokenAddress, this.WAVAX.pairAddress, this.USDCAddress, this.PublicKey).send({ from: this.PublicKey });
+            }
+            catch (_b) {
+                console.error("Failed to deploy new basket");
+                return;
+            }
+            if (newBasket.events.length == 0)
+                return;
+            this.ExposureAddress = ((_a = newBasket === null || newBasket === void 0 ? void 0 : newBasket.events[0]) === null || _a === void 0 ? void 0 : _a.address) || "Bad address";
+            yield (0, discordbot_1.sendDiscordWebook)(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`);
             this.ExposureObject = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress);
-            yield util_1.editConfig("exposureAddress", this.ExposureAddress);
-            yield util_1.sleep(1000);
+            yield (0, util_1.editConfig)("exposureAddress", this.ExposureAddress);
+            yield (0, util_1.sleep)(1000);
             yield this.initExposure();
             return this.ExposureAddress;
-        });
-    }
-    runSteps(step, maxStep) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let currentEpoch = yield this.ExposureObject.methods.epoch().call();
-            const exposureSteps = new steps_1.ExposureSteps(this.ExposureObject, this.PublicKey, this.Tokens);
-            for (step; step <= maxStep; step++) {
-                yield util_1.sleep(2000);
-                currentEpoch = yield this.ExposureObject.methods.epoch().call();
-                if (step == 4)
-                    yield this.ExposureObject.methods.changeIndexDivisor(0, (100000000 + "0".repeat(18).toString())).send({ from: this.PublicKey }).catch((err) => {
-                        console.log("STEP 4 chaing index diviso", err);
-                    });
-                console.log("Starting step", step);
-                yield exposureSteps.executeStep(step).then(() => __awaiter(this, void 0, void 0, function* () {
-                    yield discordbot_1.sendDiscordWebook(`Step ${step} done`);
-                    console.log(step, "done");
-                    yield util_1.sleep(1000);
-                })).catch((err) => __awaiter(this, void 0, void 0, function* () {
-                    let error = err.toString().split("\n");
-                    if (!error[0])
-                        return;
-                    yield discordbot_1.sendDiscordWebook(`Step ${step} error: ${error[0]}`);
-                    console.log(error[0]);
-                    yield util_1.sleep(15000);
-                    step = Number(yield this.ExposureObject.methods.rebalanceStep().call()) - 1;
-                    console.log(step + 1);
-                }));
-            }
-            yield discordbot_1.sendDiscordWebook(`Finished initializing basket`);
-            yield util_1.sleep(2000);
         });
     }
     initExposure() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.changeAccount(this.PrivateKey)))
                 return;
-            yield util_1.sleep(1000);
+            yield (0, util_1.sleep)(1000);
             yield this.ExposureObject.methods.startETF().send({ from: this.PublicKey }).catch(() => {
                 console.log("Basket already started");
             });
@@ -131,10 +105,10 @@ class ExposureAdmin {
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.changeAccount(this.PrivateKey)))
                 return;
-            yield discordbot_1.sendDiscordWebook("Starting next epoch | Current epoch: " + this.CurrentEpoch);
+            yield (0, discordbot_1.sendDiscordWebook)("Starting next epoch | Current epoch: " + this.CurrentEpoch);
             yield this.runSteps(0, 10);
             this.CurrentEpoch = yield this.ExposureObject.methods.epoch().call();
-            yield discordbot_1.sendDiscordWebook("New epoch: " + this.CurrentEpoch);
+            yield (0, discordbot_1.sendDiscordWebook)("New epoch: " + this.CurrentEpoch);
         });
     }
     burnShares(amount) {
@@ -187,6 +161,42 @@ class ExposureAdmin {
             this.Tokens = this.Baskets[basket].Tokens;
             this.ExposureAddress = basket;
             yield this.changeAccount(this.PrivateKey);
+        });
+    }
+    setInitialEpoch() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.ExposureObject.methods.epoch().call();
+        });
+    }
+    runSteps(step, maxStep) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let currentEpoch = yield this.ExposureObject.methods.epoch().call();
+            const exposureSteps = new steps_1.ExposureSteps(this.ExposureObject, this.PublicKey, this.Tokens);
+            for (step; step <= maxStep; step++) {
+                yield (0, util_1.sleep)(2000);
+                currentEpoch = yield this.ExposureObject.methods.epoch().call();
+                if (step == 4)
+                    yield this.ExposureObject.methods.changeIndexDivisor(0, (100000000 + "0".repeat(18).toString())).send({ from: this.PublicKey }).catch((err) => {
+                        console.log("STEP 4 chaing index diviso", err);
+                    });
+                console.log("Starting step", step);
+                yield exposureSteps.executeStep(step).then(() => __awaiter(this, void 0, void 0, function* () {
+                    yield (0, discordbot_1.sendDiscordWebook)(`Step ${step} done`);
+                    console.log(step, "done");
+                    yield (0, util_1.sleep)(1000);
+                })).catch((err) => __awaiter(this, void 0, void 0, function* () {
+                    let error = err.toString().split("\n");
+                    if (!error[0])
+                        return;
+                    yield (0, discordbot_1.sendDiscordWebook)(`Step ${step} error: ${error[0]}`);
+                    console.log(error[0]);
+                    yield (0, util_1.sleep)(15000);
+                    step = Number(yield this.ExposureObject.methods.rebalanceStep().call()) - 1;
+                    console.log(step + 1);
+                }));
+            }
+            yield (0, discordbot_1.sendDiscordWebook)(`Finished initializing basket`);
+            yield (0, util_1.sleep)(2000);
         });
     }
 }

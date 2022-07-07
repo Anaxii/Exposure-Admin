@@ -12,19 +12,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExposureInfo = void 0;
 const util_1 = require("./util");
 const discordbot_1 = require("./discordbot");
+// import {validateAddress} from "./decorators";
 const PairABI = require("../abi/pair.json");
 const ERC20ABI = require("../abi/erc20.json");
 const RouterABI = require("../abi/router.json");
+// @validateAddress()
 class ExposureInfo {
     constructor(e) {
         this.e = e;
     }
     getPrice(tokenAddress, pairAddress, divide, wavaxPrice) {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 let pair = new this.e.Web3.eth.Contract(PairABI, pairAddress);
                 let reserves = yield pair.methods.getReserves().call();
                 let token0 = yield pair.methods.token0().call();
+                if (!reserves._reserve1 || !reserves._reserve0 || !token0) {
+                    reject(0);
+                    return 0;
+                }
                 let price = reserves._reserve1 / reserves._reserve0;
                 if (token0 == tokenAddress) {
                     price = reserves._reserve0 / reserves._reserve1;
@@ -38,10 +44,15 @@ class ExposureInfo {
     }
     getSupply(tokenAddress) {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 let token = new this.e.Web3.eth.Contract(ERC20ABI, tokenAddress);
-                let mcap = yield token.methods.totalSupply().call();
-                resolve(Number(BigInt(mcap) / BigInt(10 ** 18)));
+                try {
+                    let mcap = yield token.methods.totalSupply().call();
+                    resolve(Number(BigInt(mcap) / BigInt(10 ** 18)));
+                }
+                catch (_a) {
+                    reject(0);
+                }
             }));
         });
     }
@@ -50,7 +61,12 @@ class ExposureInfo {
             return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
                 if (!this.e.CurrentEpoch)
                     this.e.CurrentEpoch = yield this.e.ExposureObject.methods.epoch().call();
+                try {
+                }
+                catch (_a) {
+                }
                 let price = yield this.e.ExposureObject.methods.getTokenPrice(this.e.CurrentEpoch, tokenAddress).call().catch((err) => console.log(err));
+                console.log("Test");
                 resolve(Number(BigInt(price) / BigInt(10 ** 16)) / (100));
             }));
         });
@@ -218,6 +234,48 @@ class ExposureInfo {
                     yield (0, discordbot_1.sendDiscordWebook)(info);
                 ok(info);
             }));
+        });
+    }
+    calculateTradeAmount(side) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let prices = yield this.getPricesAndMcaps();
+            let toTrade = [];
+            let method = "getTokenSellAmount";
+            if (side)
+                method = "getTokenBuyAmount";
+            for (const i in this.e.Tokens) {
+                let tradeAmount = yield this.e.ExposureObject.methods[method](this.e.CurrentEpoch.toString(), this.e.Tokens[i].tokenAddress).call().catch((err) => {
+                    console.log(err);
+                });
+                toTrade.push({ name: this.e.Tokens[i].name, amountToTrade: (Number(BigInt(tradeAmount) / BigInt(10 ** 14)) / 10 ** 4), toTradeUSD: (Number(BigInt(tradeAmount) / BigInt(10 ** 14)) / 10 ** 4) * prices.prices[this.e.Tokens[i].name], currentPrice: prices.prices[this.e.Tokens[i].name], estimatedNewPrice: 0 });
+            }
+            return toTrade;
+        });
+    }
+    calculateTotalSellAmount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let prices = yield this.getPricesAndMcaps();
+            let toTrade = [];
+            for (const i in this.e.Tokens) {
+                let tradeAmount = yield this.e.ExposureObject.methods.getTokenSellAmount(this.e.CurrentEpoch.toString(), this.e.Tokens[i].tokenAddress).call().catch((err) => {
+                    console.log(err);
+                });
+                toTrade.push({ name: this.e.Tokens[i].name, amountToTrade: (Number(BigInt(tradeAmount) / BigInt(10 ** 14)) / 10 ** 4), toTradeUSD: (Number(BigInt(tradeAmount) / BigInt(10 ** 14)) / 10 ** 4) * prices.prices[this.e.Tokens[i].name], currentPrice: prices.prices[this.e.Tokens[i].name], estimatedNewPrice: 0 });
+            }
+            return toTrade;
+        });
+    }
+    calculateTotalBuyAmount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let prices = yield this.getPricesAndMcaps();
+            let toTrade = [];
+            for (const i in this.e.Tokens) {
+                let tradeAmount = yield this.e.ExposureObject.methods.getTokenBuyAmount(this.e.CurrentEpoch.toString(), this.e.Tokens[i].tokenAddress).call().catch((err) => {
+                    console.log(err);
+                });
+                toTrade.push({ name: this.e.Tokens[i].name, amountToTrade: (Number(BigInt(tradeAmount) / BigInt(10 ** 14)) / 10 ** 4), toTradeUSD: (Number(BigInt(tradeAmount) / BigInt(10 ** 14)) / 10 ** 4) * prices.prices[this.e.Tokens[i].name], currentPrice: prices.prices[this.e.Tokens[i].name], estimatedNewPrice: 0 });
+            }
+            return toTrade;
         });
     }
 }

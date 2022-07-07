@@ -3,7 +3,7 @@ import {discordBot} from "./src/discordbot";
 import {ExposureAdmin} from "./src/exposureAdmin";
 import {ExposureInfo} from "./src/ExposureInfo";
 
-const fs = require('fs')
+const fs = require('fs');
 
 (async function () {
     const config = await getConfig()
