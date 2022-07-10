@@ -13,7 +13,7 @@ const fs = require('fs');
     const e = await new ExposureAdmin(config)
     const i = new ExposureInfo(e)
     discordBot(config.discordToken, e, i, config.discordNotifications)
-    // await e.newETF("test", 'test')
+    await e.newETF("test", 'test')
 
     let last = "bull"
     const epochLoop = async () => {
@@ -29,7 +29,7 @@ const fs = require('fs');
             last = "bull"
         }
         await e.nextEpoch()
-        setTimeout(epochLoop, 60000 * 8)
+        setTimeout(epochLoop, 600 * 3)
         await sendDiscordWebook(`Next epoch starts in 8 minutes`)
     }
 
