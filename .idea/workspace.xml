@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="05d7f3a3-8192-4818-bc10-1d256435cbc2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abi/exposure.json" beforeDir="false" afterPath="$PROJECT_DIR$/abi/exposure.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ExposureInfo.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/ExposureInfo.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/discordbot.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/discordbot.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/exposureAdmin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/exposureAdmin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +75,7 @@
       <workItem from="1657081860970" duration="647000" />
       <workItem from="1657082519116" duration="1197000" />
       <workItem from="1657084258777" duration="24927000" />
-      <workItem from="1657322662415" duration="4497000" />
+      <workItem from="1657322662415" duration="4894000" />
     </task>
     <servers />
   </component>

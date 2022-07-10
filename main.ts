@@ -38,6 +38,7 @@ const fs = require('fs');
 
 async function getConfig(): Promise<Config | null> {
     if (!fs.existsSync("json_storage/config.json")) {
+        console.error("No config | json_storage/config.json")
         return null
     }
     return JSON.parse(await fs.readFileSync('json_storage/config.json', 'utf8'))
