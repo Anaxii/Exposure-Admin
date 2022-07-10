@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const discordbot_1 = require("./src/discordbot");
 const exposureAdmin_1 = require("./src/exposureAdmin");
 const ExposureInfo_1 = require("./src/ExposureInfo");
 const fs = require('fs');
@@ -19,9 +20,26 @@ const fs = require('fs');
             return;
         const e = yield new exposureAdmin_1.ExposureAdmin(config);
         const i = new ExposureInfo_1.ExposureInfo(e);
-        // discordBot(config.discordToken, e, i, config.discordNotifications)
-        console.log(e.PublicKey);
-        e.newETF("test", 'test');
+        (0, discordbot_1.discordBot)(config.discordToken, e, i, config.discordNotifications);
+        // await e.newETF("test", 'test')
+        let last = "bull";
+        const epochLoop = () => __awaiter(this, void 0, void 0, function* () {
+            // await e.mintShares(BigInt(1000) * BigInt(10 ** 18))
+            // await sendDiscordWebook("!t reboot")
+            // await sleep(15000)
+            // await sendDiscordWebook(`!t ${last} 5`)
+            // let shareBalance = await e.ExposureObject.methods.totalSupply().call()
+            // await sendDiscordWebook("# of shares: " + (Number(BigInt(shareBalance) / BigInt(10 ** 14)) / (10**4)).toLocaleString())
+            // if (last == "bull") {
+            //     last = "bear"
+            // } else {
+            //     last = "bull"
+            // }
+            // await e.nextEpoch()
+            setTimeout(epochLoop, 600 * 8);
+            yield (0, discordbot_1.sendDiscordWebook)(`Next epoch starts in 8 minutes`);
+        });
+        yield epochLoop();
     });
 }());
 function getConfig() {

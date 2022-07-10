@@ -202,31 +202,32 @@ class ExposureInfo {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((ok) => __awaiter(this, void 0, void 0, function* () {
                 let nav = yield this.getNAV();
-                let prices = yield this.getPricesAndMcaps();
-                let p = "**Prices**: \n";
-                let pa = {};
-                let ma = [];
-                let m = "**MCAPs**: \n";
-                for (const i in prices.prices) {
-                    p += i + ": " + prices.prices[i].toLocaleString() + "\n";
-                    m += i + ": " + prices.mcaps[i].toLocaleString() + "\n";
-                    pa[i] = prices.prices[i];
-                    ma[i] = prices.prices[i];
-                }
-                let ep = "**Exposure Prices**: \n";
-                let xp = {};
-                for (const i in this.e.Tokens) {
-                    let pr = yield this.getExposurePrice(this.e.Tokens[i].tokenAddress);
-                    ep += this.e.Tokens[i].token + ": " + pr.toLocaleString() + "\n";
-                    xp[i] = pr;
-                }
+                // let prices = await this.getPricesAndMcaps()
+                // let p = "**Prices**: \n"
+                // let pa: { [key: string]: any } = {}
+                // let ma: any[any] = []
+                // let m = "**MCAPs**: \n"
+                // for (const i in prices.prices) {
+                //     p += i + ": " + prices.prices[i].toLocaleString() + "\n"
+                //     m += i + ": " + prices.mcaps[i].toLocaleString() + "\n"
+                //     pa[i] = prices.prices[i]
+                //     ma[i] = prices.prices[i]
+                // }
+                // let ep = "**Exposure Prices**: \n"
+                // let xp: { [key: string]: any } = {}
+                // for (const i in this.e.Tokens) {
+                //     let pr = await this.getExposurePrice(this.e.Tokens[i].tokenAddress)
+                //     ep += this.e.Tokens[i].token + ": " + pr.toLocaleString() + "\n"
+                //     xp[i] = pr
+                // }
                 let ind = yield this.getIndexPrice();
                 let actual = yield this.actualIndexPrice();
                 let portion = yield this.tokenPortionIndex(false);
                 let tportion = yield this.tokenPortionIndex(true);
                 let shareBalance = yield this.e.ExposureObject.methods.totalSupply().call();
                 let info = "Index Price:                                $" + ind.toLocaleString() + "\nPortion Index Price:                  $" + portion.toLocaleString() + "\nTracked Portion Index Price:   $" + tportion.toLocaleString() + "\nTrue Index Price:                       $" + actual.toLocaleString()
-                    + "\nNAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + p + ep;
+                    + "\nNAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + "Total Shares: " + shareBalance + "\n";
+                // + p + ep
                 if (notif)
                     yield (0, discordbot_1.sendDiscordWebook)(info);
                 ok(info);
