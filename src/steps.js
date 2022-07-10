@@ -77,11 +77,12 @@ class ExposureSteps {
                     return new Promise((ok, reject) => __awaiter(this, void 0, void 0, function* () {
                         for (const i in this.Tokens) {
                             yield this.Exposure.methods.updateTokenPortions().send({ from: this.PublicKey }).then(() => {
-                                ok(true);
                             }).catch((err) => {
                                 reject(err);
+                                return;
                             });
                         }
+                        ok(true);
                     }));
                 }),
                 6: () => __awaiter(this, void 0, void 0, function* () {

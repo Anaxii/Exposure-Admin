@@ -19,6 +19,7 @@ const Accounts = require('web3-eth-accounts');
 const ExposureABI = require("../abi/exposure.json");
 const ERC20ABI = require("../abi/erc20.json");
 const ExposureFactoryABI = require("../abi/exposure_factory.json");
+const BasketSharesFactory = require("../abi/BasketSharesFactory.json");
 class ExposureAdmin {
     constructor(config) {
         this.RunBot = config.bot;
@@ -27,6 +28,7 @@ class ExposureAdmin {
         this.ExposureAddress = config.exposureAddress;
         this.RouterAddress = config.routerAddress;
         this.ExposureFactoryAddress = config.exposureFactoryAddress;
+        this.SharesFactoryAddress = config.sharesFactoryAddress;
         this.USDCAddress = config.USDCAddress;
         this.WAVAX = config.WAVAX;
         this.Tokens = config.tokens;
@@ -76,27 +78,30 @@ class ExposureAdmin {
             if (newBasket.events.length == 0)
                 return;
             this.ExposureAddress = ((_a = newBasket === null || newBasket === void 0 ? void 0 : newBasket.events[0]) === null || _a === void 0 ? void 0 : _a.address) || "Bad address";
-            yield (0, discordbot_1.sendDiscordWebook)(`New Exposure ETF address: ${newBasket.events[0].address} | Name: ${etfName} | Symbol: ${etfSymbol}`);
-            this.ExposureObject = new this.Web3.eth.Contract(ExposureABI, this.ExposureAddress);
-            yield (0, util_1.editConfig)("exposureAddress", this.ExposureAddress);
-            yield (0, util_1.sleep)(1000);
-            yield this.initExposure();
-            return this.ExposureAddress;
+            let sharesFactory = new this.Web3.eth.Contract(BasketSharesFactory, this.SharesFactoryAddress);
+            let sharesAddy = yield sharesFactory.methods.newBasketSharesContract(etfName, etfSymbol, this.ExposureAddress).send({ from: this.PublicKey }).catch((err) => {
+                console.error("Failed to create shares contract |", err);
+            });
+            console.log(sharesAddy);
         });
     }
-    initExposure() {
+    initExposure(etfName, etfSymbol) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.changeAccount(this.PrivateKey)))
                 return;
             yield (0, util_1.sleep)(1000);
-            yield this.ExposureObject.methods.startETF().send({ from: this.PublicKey }).catch(() => {
+            // let sharesFactory = new this.Web3.eth.Contract(BasketShares, this.SharesFactoryAddress)
+            // await sharesFactory.methods.newBasketSharesContract(etfName, etfSymbol, this.ExposureAddress).catch((err: any) => {
+            //     console.error("Failed to create shares contract |", err)
+            // })
+            yield this.ExposureObject.methods.setBasketSharesAddress().send({ from: this.PublicKey }).catch(() => {
                 console.log("Basket already started");
             });
             yield this.runSteps(1, 9);
             yield this.ExposureObject.methods.initETF().send({ from: this.PublicKey }).then(() => {
                 console.log("done");
             }).catch((err) => __awaiter(this, void 0, void 0, function* () {
-                yield this.initExposure();
+                yield this.initExposure(etfName, etfSymbol);
                 console.log(err);
             }));
         });
@@ -201,3 +206,4 @@ class ExposureAdmin {
     }
 }
 exports.ExposureAdmin = ExposureAdmin;
+//27.18

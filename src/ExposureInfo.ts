@@ -2,12 +2,10 @@ import {ExposureAdmin} from "./exposureAdmin";
 import {sleep} from "./util";
 import {sendDiscordWebook} from "./discordbot";
 import {ExposureToTrade} from "./types";
-// import {validateAddress} from "./decorators";
 const PairABI = require("../abi/pair.json")
 const ERC20ABI = require("../abi/erc20.json")
 const RouterABI = require("../abi/router.json");
 
-// @validateAddress()
 export class ExposureInfo {
     private e: ExposureAdmin;
 
@@ -63,7 +61,6 @@ export class ExposureInfo {
 
             }
             let price = await this.e.ExposureObject.methods.getTokenPrice(this.e.CurrentEpoch, tokenAddress).call().catch((err: any) => console.log(err))
-            console.log("Test")
             resolve(Number(BigInt(price) / BigInt(10 ** 16)) / (100))
         })
     }
@@ -193,31 +190,32 @@ export class ExposureInfo {
     async epochNotification(notif: boolean) {
         return new Promise(async ok => {
             let nav = await this.getNAV()
-            let prices = await this.getPricesAndMcaps()
-            let p = "**Prices**: \n"
-            let pa: { [key: string]: any } = {}
-            let ma: any[any] = []
-            let m = "**MCAPs**: \n"
-            for (const i in prices.prices) {
-                p += i + ": " + prices.prices[i].toLocaleString() + "\n"
-                m += i + ": " + prices.mcaps[i].toLocaleString() + "\n"
-                pa[i] = prices.prices[i]
-                ma[i] = prices.prices[i]
-            }
-            let ep = "**Exposure Prices**: \n"
-            let xp: { [key: string]: any } = {}
-            for (const i in this.e.Tokens) {
-                let pr = await this.getExposurePrice(this.e.Tokens[i].tokenAddress)
-                ep += this.e.Tokens[i].token + ": " + pr.toLocaleString() + "\n"
-                xp[i] = pr
-            }
+            // let prices = await this.getPricesAndMcaps()
+            // let p = "**Prices**: \n"
+            // let pa: { [key: string]: any } = {}
+            // let ma: any[any] = []
+            // let m = "**MCAPs**: \n"
+            // for (const i in prices.prices) {
+            //     p += i + ": " + prices.prices[i].toLocaleString() + "\n"
+            //     m += i + ": " + prices.mcaps[i].toLocaleString() + "\n"
+            //     pa[i] = prices.prices[i]
+            //     ma[i] = prices.prices[i]
+            // }
+            // let ep = "**Exposure Prices**: \n"
+            // let xp: { [key: string]: any } = {}
+            // for (const i in this.e.Tokens) {
+            //     let pr = await this.getExposurePrice(this.e.Tokens[i].tokenAddress)
+            //     ep += this.e.Tokens[i].token + ": " + pr.toLocaleString() + "\n"
+            //     xp[i] = pr
+            // }
             let ind = await this.getIndexPrice()
             let actual = await this.actualIndexPrice()
             let portion = await this.tokenPortionIndex(false)
             let tportion = await this.tokenPortionIndex(true)
             let shareBalance = await this.e.ExposureObject.methods.totalSupply().call()
             let info = "Index Price:                                $" + ind.toLocaleString() + "\nPortion Index Price:                  $" + portion.toLocaleString() + "\nTracked Portion Index Price:   $" + tportion.toLocaleString() + "\nTrue Index Price:                       $" + actual.toLocaleString()
-                + "\nNAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + p + ep
+                + "\nNAV: $" + nav.toLocaleString() + " \n" + "NAV Per Share: $" + (nav / (Number(BigInt(shareBalance) / BigInt(10 ** 16)) / 100)).toLocaleString() + "\n" + "Total Shares: " + shareBalance + "\n"
+                // + p + ep
             if (notif)
                 await sendDiscordWebook(info)
             ok(info)

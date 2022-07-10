@@ -63,7 +63,7 @@ export async function discordBot(discordToken: string, e: ExposureAdmin, info: E
             let balances = await info.getAllExposureTokenBalances(e.ExposureAddress)
             let m = "Balances: \n"
             for (const i in balances) {
-                m += i + ": " + balances[i].toLocaleString() + "\n"
+                m += i + ": " + balances[i].toLocaleString(undefined, {minimumFractionDigits: 8}) + "\n"
             }
             msg.channel.send(m.toLocaleString())
         },

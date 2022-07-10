@@ -1,24 +1,11 @@
 const web3 = require('web3');
 
-export function validateAddress() {
+export function classLogger() {
     return function<TFunction extends Function>(target: TFunction){
-        let ignore = ["getIndexPrice", "actualIndexPrice", "tokenPortionIndex", "getNAV", "getPricesAndMcaps", "tradeToken", "epochNotification"]
         for(let prop of Object.getOwnPropertyNames(target.prototype)){
-            if (ignore.includes(prop)) continue;
-            console.log(prop)
-            // Save the original function
             let oldFunc: Function = target.prototype[prop];
             target.prototype[prop] = function (data: any) {
-                console.log(prop, arguments, data)
-                let isValid = false
-                switch (prop) {
-                    case "getExposurePrice":
-                        console.log(isAddress(data[0]))
-                }
-                // this['handleRequest'](); // call the extra method
-                if (isValid)
-                    return oldFunc.apply(this, arguments); // call the original and return any result
-                return 0
+                return oldFunc.apply(this, arguments); // call the original and return any result
             }
         }
     }

@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const discordbot_1 = require("./src/discordbot");
 const exposureAdmin_1 = require("./src/exposureAdmin");
 const ExposureInfo_1 = require("./src/ExposureInfo");
 const fs = require('fs');
@@ -20,8 +19,9 @@ const fs = require('fs');
             return;
         const e = yield new exposureAdmin_1.ExposureAdmin(config);
         const i = new ExposureInfo_1.ExposureInfo(e);
-        (0, discordbot_1.discordBot)(config.discordToken, e, i, config.discordNotifications);
-        console.log(yield i.calculateTradeAmount(true));
+        // discordBot(config.discordToken, e, i, config.discordNotifications)
+        console.log(e.PublicKey);
+        e.newETF("test", 'test');
     });
 }());
 function getConfig() {

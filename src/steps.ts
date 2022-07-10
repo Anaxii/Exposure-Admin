@@ -74,11 +74,12 @@ export class ExposureSteps {
                return new Promise(async (ok, reject) => {
                    for (const i in this.Tokens) {
                        await this.Exposure.methods.updateTokenPortions().send({from: this.PublicKey}).then(() => {
-                           ok(true)
                        }).catch((err: any) => {
                            reject(err)
+                           return
                        })
                    }
+                   ok(true)
                })
            },
            6: async (): Promise<boolean | string> => {

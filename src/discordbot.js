@@ -147,7 +147,6 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 yield msg.channel.send("Balance: " + (Number(BigInt(shareBalance) / BigInt(10 ** 14)) / (10 ** 4)).toLocaleString());
             }),
             "baskets": (msg) => __awaiter(this, void 0, void 0, function* () {
-                console.log(e.Baskets);
                 let basket_list = "";
                 for (const i in e.Baskets) {
                     let token_list = "";
@@ -159,33 +158,17 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 msg.channel.send(basket_list);
             }),
             "changebasket": (msg, data) => __awaiter(this, void 0, void 0, function* () {
-                console.log(e.Baskets);
                 msg.channel.send("Current basket: " + e.ExposureAddress);
-                // @ts-ignore
-                // @ts-ignore
-                yield e.switchBasket(Object.keys(e.Baskets)[data[2]]);
-                // console.log(data[2])
+                yield e.switchBasket(Object.keys(e.Baskets)[Number(data[2])]);
                 msg.channel.send("New basket: " + e.ExposureAddress);
             }),
             "tobuy": (msg) => __awaiter(this, void 0, void 0, function* () {
-                let amounts = yield info.calculateTotalBuyAmount();
-                let message = "";
-                let totalUSD = 0;
-                for (const i in amounts) {
-                    totalUSD += amounts[i].toTradeUSD;
-                    message += `${amounts[i].name} | Buying ${amounts[i].amountToTrade} ($${amounts[i].toTradeUSD.toLocaleString()}) | Current Price: ${amounts[i].currentPrice.toLocaleString()} | Est New Price: ${amounts[i].estimatedNewPrice.toLocaleString()}\n`;
-                }
-                msg.channel.send(`Total Buy: $${totalUSD.toLocaleString()}\n`);
+                let tradeMessage = yield getTradeMessage(true);
+                msg.channel.send(tradeMessage);
             }),
             "tosell": (msg) => __awaiter(this, void 0, void 0, function* () {
-                let amounts = yield info.calculateTotalSellAmount();
-                let message = "";
-                let totalUSD = 0;
-                for (const i in amounts) {
-                    totalUSD += amounts[i].toTradeUSD;
-                    message += `${amounts[i].name} | Selling ${amounts[i].amountToTrade} ($${amounts[i].toTradeUSD.toLocaleString()}) | Current Price: ${amounts[i].currentPrice.toLocaleString()} | Est New Price: ${amounts[i].estimatedNewPrice.toLocaleString()}\n`;
-                }
-                msg.channel.send(`Total Sell: $${totalUSD.toLocaleString()}\n`);
+                let tradeMessage = yield getTradeMessage(false);
+                msg.channel.send(tradeMessage);
             }),
             "rebsum": (msg) => __awaiter(this, void 0, void 0, function* () {
                 let totalBuy = 0;
@@ -204,6 +187,23 @@ function discordBot(discordToken, e, info, DiscordNotifications) {
                 yield msg.channel.send("epoch \nepochinfo \nbasketaddress \nnextepoch \nnewetf \nprices \nmcaps \nbalances \nshares \nnav \nindex \nportions \nnotif (on/off) \nnewetf (name) (symbol) \neditconfig (data) \nrebbot \nexposure \nmint (amount) \nburn (amount) \nsharebalance \nrebsum \ntobuy \ntosell");
             })
         };
+        function getTradeMessage(side) {
+            return __awaiter(this, void 0, void 0, function* () {
+                return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                    let amounts = yield info.calculateTradeAmount(side);
+                    let sideMessage = "Selling";
+                    if (side)
+                        sideMessage = "Buying";
+                    let message = "";
+                    let totalUSD = 0;
+                    for (const i in amounts) {
+                        totalUSD += amounts[i].toTradeUSD;
+                        message += `${amounts[i].name} | ${sideMessage} ${amounts[i].amountToTrade} ($${amounts[i].toTradeUSD.toLocaleString()}) | Current Price: ${amounts[i].currentPrice.toLocaleString()} | Est New Price: ${amounts[i].estimatedNewPrice.toLocaleString()}\n`;
+                    }
+                    resolve(`Total ${sideMessage}: $${totalUSD.toLocaleString()}\n` + message);
+                }));
+            });
+        }
         client.once('ready', () => {
             console.log('Bot loaded');
         });
