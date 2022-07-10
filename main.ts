@@ -31,6 +31,7 @@ const fs = require('fs');
         await e.nextEpoch()
     }
 
+    await e.mintShares(BigInt(1000) * BigInt(10 ** 18))
     setInterval(epochLoop, 60000 * 8)
 }())
 
