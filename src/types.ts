@@ -7,7 +7,6 @@ export interface Config {
     discordToken: string;
     exposureAddress: string;
     exposureFactoryAddress: string;
-    sharesFactoryAddress: string
     routerAddress: string;
     USDCAddress: string;
     APIURL: string;
